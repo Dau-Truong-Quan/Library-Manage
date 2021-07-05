@@ -12,7 +12,8 @@ void chuan_hoa_chu(string& a);
 bool Kiem_Tra_Du_Lieu(char c);
 bool Kiem_Tra_Ki_Tu_So(char c);
 int Kiem_tra_phim(char c);
-int nhap_ki_tu(string& str, int flag, int viTri);
+//int nhap_ki_tu(string& str, int flag, int viTri);
+int nhap_ki_tu(string& str, int flag, int viTri, int khoangCach);
 void xoaBangNhap();
 void xoaThongBao();
 void inThongBao(string str);
@@ -87,10 +88,10 @@ bool Kiem_Tra_Ki_Tu_So(char c)
 int Kiem_tra_phim(char c)
 {
 	// 9 : tab, 16: shifl, ôi nhác quá đi nt với cr thoi
-	int arr[31] = { 9,16,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,58,59,60,61,62,63,64,91,93,92,94,95,96,126 };
+	int arr[30] = { 9,16,33,34,35,36,37,38,39,40,41,42,43,44,46,47,58,59,60,61,62,63,64,91,93,92,94,95,96,126 };
 	if (Kiem_Tra_Ki_Tu_So(c) == true) // so
 		return 2;
-	for (int i = 0; i < 31; i++)
+	for (int i = 0; i < 30; i++)
 		if (c == arr[i])
 			return 1;
 
@@ -114,6 +115,7 @@ int nhap_ki_tu(string& str, int flag, int viTri, int khoangCach)
 
 			if (c == 0 || c == -32) // 0 là null và -32 là một số trường hợp đặt biệt sẽ xuất hiện kí tự -32 ví dụ như các phím di chuyển lên xuống <^>
 			{
+				
 				break;
 			}
 			if (c == 27) // nhấn nút esc thì thoát
@@ -228,4 +230,13 @@ void inThongBao(string str)
 {
 	gotoxy(X_Notification, Y_Notification + 1);
 	cout << str;
+}
+// ham chuyen doi chuỗi sang số nếu chuyển hết rt giá trị <> -1
+int chuoi_sang_so(string x)
+{
+	string temp = x;
+	int n = atoi(temp.c_str());
+	if (n != 0)
+		return n;
+	return -1;
 }
