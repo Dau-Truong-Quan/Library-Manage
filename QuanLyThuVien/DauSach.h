@@ -42,8 +42,8 @@ typedef struct list_dausach LIST_DS;
 struct indexTheLoai
 {
 	int chiso;
-	string theloai;
-	string tensach;
+	char theloai[50];
+	char tensach[50];
 };
 
 struct listTheLoai {
@@ -211,8 +211,7 @@ void nhapDS(LIST_DS& l, int flag)
 		switch (viTri)
 		{
 			case 0:
-			{
-				xoaThongTinBangNhap();
+			{			
 				kt = nhap_ki_tu(s.ISBN, 2, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -220,6 +219,7 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
+				if (kt == KEY_UP) break;
 				if (flag == 0) //trường hợp nhập mới
 				{
 					xoaThongBao();
@@ -239,7 +239,8 @@ void nhapDS(LIST_DS& l, int flag)
 					{						
 						inThongBao("Dau sach khong ton tai!");
 						break;
-					}									
+					}		
+					xoaThongTinBangNhap();
 					gotoxy(X_Add + 12, 1 * 2 + Y_Add);
 					cout << l.ds[stt]->tensach;
 					gotoxy(X_Add + 12, 2 * 2 + Y_Add);
@@ -280,6 +281,7 @@ void nhapDS(LIST_DS& l, int flag)
 			}
 			case 1:
 			{
+				xoaThongBao();
 				kt = nhap_ki_tu(s.tensach, 1, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -287,11 +289,18 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
+				if (kt == KEY_UP)
+				{
+					xoaThongBao();
+					viTri--;
+					break;
+				}
 				viTri++;
 				break;
 			}
 			case 2:
 			{
+				xoaThongBao();
 				kt = nhap_ki_tu(soTrang, 2, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -299,12 +308,17 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
-				viTri++;
-				s.sotrang = atoi(soTrang.c_str());
+				if (kt == KEY_UP)
+				{
+					viTri--;
+					break;
+				}
+				viTri++;				
 				break;
 			}
 			case 3:
 			{
+				xoaThongBao();
 				kt = nhap_ki_tu(s.tacgia, 0, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -312,11 +326,17 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
+				if (kt == KEY_UP)
+				{
+					viTri--;
+					break;
+				}
 				viTri++;
 				break;
 			}
 			case 4:
 			{
+				xoaThongBao();
 				kt = nhap_ki_tu(namxb, 2, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -324,12 +344,17 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
-				s.namxuatban = atoi(namxb.c_str());
+				if (kt == KEY_UP)
+				{
+					viTri--;
+					break;
+				}				
 				viTri++;
 				break;
 			}
 			case 5:
 			{
+				xoaThongBao();
 				kt = nhap_ki_tu(s.theloai, 0, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -337,6 +362,13 @@ void nhapDS(LIST_DS& l, int flag)
 					xoaThongBao();
 					return;
 				}
+				if (kt == KEY_UP)
+				{
+					viTri--;
+					break;
+				}
+				s.sotrang = atoi(soTrang.c_str());
+				s.namxuatban = atoi(namxb.c_str());
 				s.soluotmuon = 0;
 				themMotDS(l, s);
 				ghiFileDS(l);
@@ -367,7 +399,6 @@ void nhapDMS(LIST_DS& l)
 		{
 			case 0:
 			{
-				xoaThongTinBangNhap();
 				kt = nhap_ki_tu(chuoinhap, 2, viTri, khoangCach);
 				if (kt == -1)
 				{
@@ -477,15 +508,15 @@ void sapXepGiuNguyenIndex(LIST_DS& l, listTheLoai& listIndex)
 	for (int i = 0; i < l.n; i++)
 	{
 		listIndex.nodes[i].chiso = i;
-		listIndex.nodes[i].theloai = l.ds[i]->theloai;
-		listIndex.nodes[i].tensach = l.ds[i]->tensach;
+		strcpy(listIndex.nodes[i].theloai, l.ds[i]->theloai.c_str());
+		strcpy(listIndex.nodes[i].tensach, l.ds[i]->tensach.c_str());
 	}
 	for (int i = 0; i < l.n - 1; i++)
 		for (int j = i + 1; j < l.n; j++)
-			if (listIndex.nodes[j].theloai.compare(listIndex.nodes[i].theloai) < 0)
+			if (strcmp(listIndex.nodes[j].theloai, listIndex.nodes[i].theloai) < 0)
 				swap(listIndex.nodes[j], listIndex.nodes[i]);
-			else if (listIndex.nodes[j].theloai.compare(listIndex.nodes[i].theloai) == 0)
-				if (listIndex.nodes[j].tensach.compare(listIndex.nodes[i].tensach) < 0)
+			else if (strcmp(listIndex.nodes[j].theloai, listIndex.nodes[i].theloai) == 0)
+				if (strcmp(listIndex.nodes[j].tensach, listIndex.nodes[i].tensach) < 0)
 					swap(listIndex.nodes[j], listIndex.nodes[i]);
 }
 
