@@ -9,7 +9,7 @@ using namespace std;
 
 int main()
 {
-	/*fullscreen();*/
+	fullscreen();
 	CenterMenu();
 	return 0;
 }

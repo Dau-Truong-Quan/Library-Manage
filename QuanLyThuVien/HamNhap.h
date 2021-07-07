@@ -167,11 +167,17 @@ int nhap_ki_tu(string& str, int flag, int viTri, int khoangCach)
 			{
 				if (Kiem_Tra_Du_Lieu(c) == false) // nếu nhập kí tự là chữ
 				{
+					xoaThongBao();
+					inThongBao("Chi duoc nhap so!");
+					gotoxy(X_Add + khoangCach + length, viTri * 2 + Y_Add);
 					break;
 				}
 			}
 			if (k == 2 && flag == 0) // nếu nhập kí tự là số
 			{
+				xoaThongBao();
+				inThongBao("Chi duoc nhap chu!");
+				gotoxy(X_Add + khoangCach + length, viTri * 2 + Y_Add);
 				break;
 			}
 
