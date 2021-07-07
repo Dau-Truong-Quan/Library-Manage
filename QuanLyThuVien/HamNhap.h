@@ -260,8 +260,10 @@ void xoaThongBao()
 
 void inThongBao(string str)
 {
+	SetColor(12);
 	gotoxy(X_Notification, Y_Notification + 1);
 	cout << str;
+	SetColor(11);
 }
 // ham chuyen doi chuỗi sang số nếu chuyển hết rt giá trị <> -1
 int chuoi_sang_so(string x)

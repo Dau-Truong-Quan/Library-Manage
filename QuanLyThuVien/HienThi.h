@@ -207,11 +207,11 @@ void CenterMenu()
 		switch (pointer)
 		{
 			case 1:
-				system("color 0B");
+				SetColor(11);
 
 				break;
 			case 2:
-				system("color 0B");
+				SetColor(11);
 				menuDauSach(l);
 				break;
 			case 3:

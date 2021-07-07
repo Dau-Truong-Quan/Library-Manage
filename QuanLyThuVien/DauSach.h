@@ -607,6 +607,7 @@ void veBang(string content[], int nContent)// ve bang
 		cout << char(176);
 	}
 
+	//SetColor(6);
 	cout << endl;
 	gotoxy(X_Tutorial, Y_Tutorial);
 	cout << " Huong dan ";
@@ -615,9 +616,16 @@ void veBang(string content[], int nContent)// ve bang
 	gotoxy(X_Tutorial, Y_Tutorial + 3);
 	cout << " Insert: Them dau sach || Del: Xoa ";
 	gotoxy(X_Tutorial, Y_Tutorial + 4);
-	cout << " Home: Them sach || ESC: Thoat";
-	gotoxy(X_Notification, Y_Notification);
+	cout << " F4: Sua dau sach || Home: Them sach ";
+	gotoxy(X_Tutorial, Y_Tutorial + 5);
+	cout << " ESC: Thoat";
+	gotoxy(X_TitlePage, Y_TitlePage);
+	cout << "Quan li dau sach";
+
+	//SetColor(12);
+	gotoxy(X_Notification, Y_Notification);	
 	cout << " Thong Bao ";
+	//NormalLine();
 }
 
 //Xóa nội dung bị dư trong bảng cuối cùng, nContent - so luong cột có trong bang do
@@ -763,10 +771,7 @@ void menuDauSach(LIST_DS& l)
 	// ceil lam tron len
 	soLuongTrangDS = (int)ceil((double)l.n / NumberPerPage);
 	inMotTrangDS(l, 0);
-	veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
-
-	gotoxy(X_TitlePage, Y_TitlePage);
-	cout << "Quan li dau sach";
+	veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));	
 
 	int signal;
 	while (true)
