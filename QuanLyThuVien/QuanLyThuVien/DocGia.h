@@ -65,6 +65,7 @@ void AddHead(listMT& listMT, PTR_MT node);
 
 TREE_DG timKiemDocGiaTheoMa(TREE_DG& dsDG, int maDocGia);
 void themDG(TREE_DG& dsDG, TREE_DG nodeDocGia);
+void docFileDG(TREE_DG& dsDG);
 void xuatDanhSachDocGia(TREE_DG dsDG);
 void chuyenCaySangMang(TREE_DG dsDG, docgia* arr, int& index);
 void xuatThongTinDocGia(docgia a, int tungdo);
@@ -75,7 +76,6 @@ void ToMau2(int x, int y, int a, int color);
 void ToMau3(int x, int y, Date a, int color);
 
 //DOC VA GHI FILE
-void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
 void ghiFileDocGia(TREE_DG q, ofstream& fileout);
 int demTongSoSachDocGiaTungMuon(docgia x);
@@ -380,7 +380,12 @@ void xuatSachMuon(TREE_DG docGia, LIST_DS l)
 				}
 			}
 		}
-	}	
+	}
+	if (kt == 0) {
+		inThongBao("không có độc giả mượn sách");
+		Sleep(1000);
+		xoaThongBao();
+	}
 
 }
 
@@ -454,11 +459,6 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 			Sleep(1000);
 			xoaThongBao();
 			break;
-		}
-		else if(dem == 0){
-			inThongBao("HIEN TAI DOC GIA CHUA MUON SACH");
-			Sleep(1000);
-			xoaThongBao();
 		}
 		PTR_DMS k = NULL;
 		string ma_sach;
@@ -627,7 +627,6 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 			inThongBao(modeTraSach == true ? " CHUA MUON SACH MA DOI TRA" : "CHUA MUON SACH MA DOI MAT");
 			Sleep(1000);
 			xoaThongBao();
-			break;
 		}
 		bool check = false;
 		muontra* arr = new muontra[n];
@@ -720,30 +719,10 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 					return;
 				}
 				if (c == ENTER) {
-					// kiểm tra sách này đã được bật trạng thái mất hay chưa?
-					bool kiemTraMatSach = false;
-					for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
-						if (p->data.masach == arr[indexNow].masach) {
-							if (p->data.trangthai == 2 && modeTraSach == false) {
-								inThongBao("SACH NAY DA BI MAT TRUOC DO");
-								Sleep(1000);
-								xoaThongBao();
-								kiemTraMatSach = true;
-							}
-						
-						
-						}
-						
-					}
-					if (kiemTraMatSach == true) {
-						continue;
-					}
-
-					// hộp thoại xác nhận trả hoặc mất sách
 					if (xac_nhan(80, 15, modeTraSach == true ? "XAC NHAN TRA SACH " : "XAC NHAN MAT SACH ", arr[indexNow].masach) == true)
 						check = true;
 					else check = false;
-					
+					break;
 				}
 
 				if (check) {
@@ -758,10 +737,9 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 							}
 							if (p->data.trangthai == 2) dem++;
 						}
-						if (dem != 0) // còn sách làm mất -> khóa thẻ
-							docGia->data.trangthaithe = 0;
-						else
-							docGia->data.trangthaithe = 1; // mở thẻ nếu trả được sách đã mất
+						if (dem != 0) {
+							docGia->data.trangthaithe = 1;
+						}
 					}
 					else {
 						PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);

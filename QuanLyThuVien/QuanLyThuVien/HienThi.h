@@ -207,11 +207,11 @@ void CenterMenu()
 		switch (pointer)
 		{
 			case 1:
-				SetColor(11);
+				system("color 0B");
 
 				break;
 			case 2:
-				SetColor(11);
+				system("color 0B");
 				menuDauSach(l);
 				break;
 			case 3:
@@ -269,18 +269,18 @@ void CenterMenu()
 						phimThaoTac = _getch();
 						if (phimThaoTac == 60) { // muon sach
 							MUON_SACH(dsDG, l, nodeDG);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
+							/*GHI_FILE_DS_DG(t);
+							GhiFileDS(l);*/
 						}
 						else if (phimThaoTac == 62) { // tra sach
 							traSach(  nodeDG, l, true);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
+							/*GHI_FILE_DS_DG(t);
+							GhiFileDS(l);*/
 						}
 						else if (phimThaoTac == 63) {
 							traSach(  nodeDG, l, false);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
+							/*GHI_FILE_DS_DG(t);
+							GhiFileDS(l);*/
 						}
 
 					}
@@ -294,7 +294,8 @@ void CenterMenu()
 
 				}
 			} while (1);
-			
+			ghiFileDanhSachDocGia(dsDG);
+			ghiFileDS(l);
 			break;
 			}
 				
