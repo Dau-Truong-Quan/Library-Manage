@@ -463,11 +463,12 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 		PTR_DMS k = NULL;
 		string ma_sach;
 		string ma_dau_sach;
-		bool check = false; // kiem tra co tim thay ma sach hay ko
+		
 		int indexDS = 0;
 		gotoxy(99, 42); cout << "                         ";
 		while (1) // vòng while dừng khi số lượng sách hơn 3 hoặc nhấn phím ESC
 		{
+			bool check = false; // kiem tra co tim thay ma sach hay ko
 			if (dem >= 3) break; // mượn đến khi nào sách bằng 3 cuốn thì dừng 
 			system("cls");
 			gotoxy(20, 5);
@@ -481,6 +482,7 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 
 			if (bienThaoTac == -1) // ESC 
 				return;
+			bool checkExistDMS = false;
 			ma_dau_sach = tachMaSach(ma_sach); // tách mã sách thành mã đầu sách
 			indexDS = timKiemDauSachTheoMa(l, ma_dau_sach); // tìm kiếm sách theo mã trả về vị trí của đầu sách
 			if (indexDS == -1) // khoong tim thay
@@ -518,6 +520,7 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 							dem++; // thay đổi số lượng sách mượn để tí nữa kiểm tra 
 							check = true; // đánh dấu là mượn thành công để chuẩn bị vào bước ghi file lưu thông tin
 							k->data.trangthai = 1; // cap nhat sach co nguoi muon
+							checkExistDMS = true;
 							break;
 						}
 						else if (k->data.trangthai == 1)
@@ -537,6 +540,11 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 							break;
 						}
 					}
+				}
+				if (checkExistDMS == false) {
+					inThongBao("DANH MUC SACH KHONG TON TAI");
+					Sleep(1000);
+					xoaThongBao;
 				}
 				if (check == true)
 				{
