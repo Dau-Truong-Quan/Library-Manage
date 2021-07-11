@@ -244,9 +244,7 @@ void nhapDS(LIST_DS& l, int flag)
 					{						
 						inThongBao("Ma ISBN bi trung!");
 						break;
-					}
-					viTri++;
-					break;
+					}					
 				}
 				if (flag == 1) //trường hợp xóa đầu sách
 				{					
@@ -297,10 +295,10 @@ void nhapDS(LIST_DS& l, int flag)
 					s = *l.ds[stt];
 					soTrang = to_string(l.ds[stt]->sotrang);
 					namxb = to_string(l.ds[stt]->namxuatban);
-					hienThongTinDS(s);
-					viTri++;
-					break;
+					hienThongTinDS(s);					
 				}
+				viTri++;
+				break;
 			}
 			case 1:
 			{
@@ -839,6 +837,15 @@ void menuDauSach(LIST_DS& l)
 				{
 					taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
 					nhapDS(l, 2);
+					ShowCur(false);
+				}
+				if (signal == 59)
+				{
+					//taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
+					system("cls");
+					//nhapDS(l, 2);
+					inMotTrangDS(l, (trangDSHienTai - 1) * NumberPerPage);
+					veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
 					ShowCur(false);
 				}
 			}
