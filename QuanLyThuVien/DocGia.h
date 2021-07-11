@@ -707,7 +707,7 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 					case LEFT:
 					{
 						if (indexNow == 0)
-							indexNow = indexArr;
+							indexNow =( indexArr -1) ;
 						else
 							indexNow--;
 						break;
@@ -715,7 +715,7 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 					case DOWN:
 					case RIGHT:
 					{
-						if (indexNow == indexArr)
+						if (indexNow == (indexArr - 1))
 							indexNow = 0;
 						else
 							indexNow++;
@@ -770,6 +770,8 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 							docGia->data.trangthaithe = 0;
 						else
 							docGia->data.trangthaithe = 1; // mở thẻ nếu trả được sách đã mất
+
+						
 					}
 					else {
 						PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);
