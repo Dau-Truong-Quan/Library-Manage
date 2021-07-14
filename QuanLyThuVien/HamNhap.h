@@ -264,6 +264,13 @@ void inThongBao(string str)
 	gotoxy(X_Notification, Y_Notification + 1);
 	cout << str;
 	SetColor(11);
+	int c;
+	while (true)
+		if (_kbhit())
+		{
+			c = _getch();
+			return;
+		}
 }
 // ham chuyen doi chuỗi sang số nếu chuyển hết rt giá trị <> -1
 int chuoi_sang_so(string x)

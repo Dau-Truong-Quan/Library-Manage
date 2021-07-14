@@ -57,7 +57,7 @@ int themMotDS(LIST_DS& l, dausach s);
 void nhapDS(LIST_DS& l);
 int timKiemDauSachTheoMa(LIST_DS l, string maDauSach);
 void xoaNoiDungCu(int nContent, int locate);
-void inMotDS(dausach* s, int position);
+void inMotDS(dausach* s, int position, int StartIndex);
 void veBang(string content[], int nContent);
 void xoaNoiDungBiDu(int count, int nContent);
 void inMotTrangDS(LIST_DS l, int StartIndex);
@@ -469,7 +469,7 @@ void nhapDMS(LIST_DS& l)
 			case 2:
 			{
 				danhmucsach x;
-				int stt = 0; //stt mã sách
+				int stt = 1; //stt mã sách
 				if (l.ds[i]->dms != NULL)
 				{
 					PTR_DMS q = l.ds[i]->dms;
@@ -480,11 +480,11 @@ void nhapDMS(LIST_DS& l)
 					x.vitri = q->data.vitri; // lấy vị trí cuối cùng của sách đã tồn tại
 					int pos = q->data.masach.find("-"); // lấy vị trí của kí tự - trong chuỗi
 					string str = q->data.masach.substr(pos + 1); //  lấy chuỗi con của q->data.masach bắt đầu sau kí tự '-'
-					stt = atoi(str.c_str()); //chuyển chuỗi sang số
+					stt += atoi(str.c_str()); //chuyển chuỗi sang số
 				}
 				for (int j = 0; j < n; j++)
 				{
-					x.masach = l.ds[i]->ISBN + "-" + to_string(stt + j + 1);
+					x.masach = l.ds[i]->ISBN + "-" + to_string(stt + j);
 					gotoxy(X_Add + khoangCach, viTri * 2 + Y_Add);
 					cout << x.masach;
 					kt = nhap_ki_tu(x.vitri, 1, viTri + 1, khoangCach); //chỉ nhập kí tự và số
@@ -535,6 +535,45 @@ void swap(indexTheLoai& x, indexTheLoai& y)
 	y = temp;
 }
 
+void sapxep(listTheLoai& list, int l, int r)
+{
+	string x;
+	int i, j;
+	i = l;
+	j = r;
+	x = list.nodes[(l + r) / 2].theloai;
+	do
+	{
+		while (list.nodes[i].theloai < x)i++;
+		while (list.nodes[j].theloai > x)j--;
+		if (i <= j)
+		{
+			swap(list.nodes[i], list.nodes[j]);
+			i++;
+			j--;
+		}
+	} while (i <= j);
+	if (l < j)sapxep(list, l, j);
+	if (i < r)sapxep(list, i, r);
+}
+void quickSort(listTheLoai& list, int n)
+{
+	sapxep(list, 0, n - 1);
+}
+void Insertion_sort(listTheLoai& list, int n)
+{
+	indexTheLoai x;
+	int i, j;
+	for (i = 1; i < n; i++)
+	{
+		x = list.nodes[i];
+		for (j = i - 1; j >= 0 && x.theloai < list.nodes[j].theloai; j--)
+			list.nodes[j + 1] = list.nodes[j];
+		list.nodes[j + 1] = x;
+	}
+}
+
+
 //sắp xếp đầu sách giữ nguyên index
 void sapXepGiuNguyenIndex(LIST_DS& l, listTheLoai& listIndex)
 {
@@ -559,13 +598,22 @@ void sapXepGiuNguyenIndex(LIST_DS& l, listTheLoai& listIndex)
 void inMotDS(dausach* s, int position, int StartIndex)
 {
 	xoaNoiDungCu(sizeof(thongTinDS) / sizeof(string), position);// xoa dong noi dung cu truoc do
-	gotoxy(xKeyDisplay[0] + 3, Y_Display + 3 + position * 3); cout << position + StartIndex + 1;
-	gotoxy(xKeyDisplay[1] + 3, Y_Display + 3 + position * 3); cout << s->ISBN;
-	gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + position * 3); cout << s->tensach;
-	gotoxy(xKeyDisplay[3] + 3, Y_Display + 3 + position * 3); cout << s->sotrang;
-	gotoxy(xKeyDisplay[4] + 3, Y_Display + 3 + position * 3); cout << s->tacgia;
-	gotoxy(xKeyDisplay[5] + 3, Y_Display + 3 + position * 3); cout << s->namxuatban;
-	gotoxy(xKeyDisplay[6] + 3, Y_Display + 3 + position * 3); cout << s->theloai;
+	gotoxy(xKeyDisplay[0], Y_Display + 3 + position * 3); cout << char(176) << "  " << position + StartIndex + 1;
+	gotoxy(xKeyDisplay[1], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->ISBN;
+	gotoxy(xKeyDisplay[2], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->tensach;
+	gotoxy(xKeyDisplay[3], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->sotrang;
+	gotoxy(xKeyDisplay[4], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->tacgia;
+	gotoxy(xKeyDisplay[5], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->namxuatban;
+	gotoxy(xKeyDisplay[6], Y_Display + 3 + position * 3); cout << char(176) << "  " << s->theloai;
+	for (int i = 0; i < 7 + 1; i++)
+	{
+		gotoxy(xKeyDisplay[i], Y_Display + 1 + position * 3);
+		cout << char(176);
+		gotoxy(xKeyDisplay[i], Y_Display + 2 + position * 3);
+		cout << char(176);
+		gotoxy(xKeyDisplay[i], Y_Display + 3 + position * 3);
+		cout << char(176);
+	}
 }
 
 void veBang(string content[], int nContent)// ve bang 
@@ -581,14 +629,14 @@ void veBang(string content[], int nContent)// ve bang
 	}
 
 	//ve cac duong thang de phan chia cac cot
-	for (int j = Y_Display; j <= Y_Display + 20; j++)
+	/*for (int j = Y_Display; j <= Y_Display + 20; j++)
 	{
 		for (int i = 0; i < nContent + 1; i++)
 		{
 			gotoxy(xKeyDisplay[i], j);
 			cout << char(176);
 		}
-	}
+	}*/
 	//ve thanh ngang ben tren va duoi
 	for (int i = xKeyDisplay[0]; i <= xKeyDisplay[nContent]; i++)
 	{
@@ -601,7 +649,7 @@ void veBang(string content[], int nContent)// ve bang
 		cout << char(176);
 
 		//ve thanh ngang ben duoi
-		gotoxy(i, Y_Display + 21);
+		gotoxy(i, Y_Display + 19);
 		cout << char(176);
 	}
 
@@ -610,15 +658,23 @@ void veBang(string content[], int nContent)// ve bang
 	gotoxy(X_Tutorial, Y_Tutorial);
 	cout << " Huong dan ";
 	gotoxy(X_Tutorial, Y_Tutorial + 2);
-	cout << " Page Up: Len || Page Down: Xuong ";
+	cout << " Page Up: Len";
 	gotoxy(X_Tutorial, Y_Tutorial + 3);
-	cout << " Insert: Them dau sach || Del: Xoa ";
+	cout << " Page Down: Xuong";
 	gotoxy(X_Tutorial, Y_Tutorial + 4);
-	cout << " F4: Sua dau sach || Home: Them sach ";
+	cout << " Insert: Them dau sach";
 	gotoxy(X_Tutorial, Y_Tutorial + 5);
-	cout << " ESC: Thoat";
+	cout << " Delete: Xoa";
+	gotoxy(X_Tutorial, Y_Tutorial + 6);
+	cout << " F4: Sua dau sach";
+	gotoxy(X_Tutorial, Y_Tutorial + 7);
+	cout << " F1: Tim kiem";
+	gotoxy(X_Tutorial, Y_Tutorial + 8);
+	cout << " Home: Them sach";
+	gotoxy(X_Tutorial, Y_Tutorial + 9);
+	cout << " ESC: Tro ve";
 	gotoxy(X_TitlePage, Y_TitlePage);
-	cout << "Quan li dau sach";
+	cout << "Quan ly dau sach";
 
 	//SetColor(12);
 	gotoxy(X_Notification, Y_Notification);	
@@ -760,6 +816,125 @@ node_DMS* timKiemDanhMucSach(LIST_DS l, string masach)
 		}
 	return NULL;
 }
+//Trả về số lượng đầu sách tìm được, flag = 0: in sách để xem, flag = 1: in sách để click chọn
+int timKiemDSTheoTen(LIST_DS l, string tuKhoa, int flag)
+{	
+	system("cls");
+	ShowCur(false);
+	int* a = new int[l.n]; //mảng lưu chỉ số đầu sách được tìm thấy
+	int dem; //biến lưu số lượng đầu sách được tìm thấy
+	int vitri_timthay;
+	bool KT; //biến vòng while nhỏ
+	char signal; //biến bắt phím
+	int pointer = 0; //biến thanh sáng đầu sách
+	int slsach = 0; //biến lưu số lượng sách của đầu sách được chọn
+	while (true)
+	{
+		system("cls");
+		dem = 0;
+		for (int i = 0; i < l.n; i++) //duyệt từ đầu đến cuối danh sách đầu sách
+		{
+			//tìm vị trí của chuỗi con tuKhoa trong tên đầu sách
+			vitri_timthay = l.ds[i]->tensach.find(tuKhoa);
+			if (vitri_timthay != string::npos) //npos - tương tự như null
+			{
+				inMotDS(l.ds[i], dem, 0);
+				a[dem] = i; //lưu lại vị trí đầu sách này
+				dem++;
+			}
+		}
+		if (dem != 0) //Nếu tìm thấy đầu sách thích hợp
+		{
+			for (int i = 0; i < 7; i++) //in tiêu đề
+			{// Y_Display 3
+				gotoxy(xKeyDisplay[i] + 3, Y_Display + 1);
+				cout << thongTinDS[i];
+			}		
+			for (int i = xKeyDisplay[0]; i <= xKeyDisplay[7]; i++)
+			{
+				//ve thanh ngang tieu de so 1
+				gotoxy(i, Y_Display);
+				cout << char(176);
+
+				//ve thanh ngang tieu de so 2
+				gotoxy(i, Y_Display + 2);
+				cout << char(176);
+			}
+			gotoxy(xKeyDisplay[0], Y_Display + 1 + dem * 3); cout << setw(135) << setfill(char(176)) << "";
+			// to mau cho dong duoc chon
+			KT = true;
+			
+			gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + pointer * 3);
+			HighlightLine();
+			cout << l.ds[a[pointer]]->tensach;
+			NormalLine(); // tro ve mau cu
+			// dieu khien chuc nang
+			while (KT)
+			{
+				signal = _getch();// kiem tra xem co nhap gi tu ban phim khong
+				if (signal == ESC)
+				{
+					delete[] a;
+					return dem;
+				}
+				if (signal == -32)
+				{
+					signal = _getch();
+				}
+				// dieu huong
+				switch (signal)
+				{
+					case KEY_UP:
+						gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + pointer * 3);
+						cout << l.ds[a[pointer]]->tensach;
+						if (pointer > 0)
+							pointer--;// cap nhat lai vi tri	
+						else if (pointer == 0)
+							pointer = dem - 1;
+						HighlightLine(); // to mau thanh sang
+						gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + pointer * 3);
+						cout << l.ds[a[pointer]]->tensach;
+						NormalLine(); // tro ve mau cu
+						break;
+					case KEY_DOWN:
+						NormalLine(); // tro ve mau cu
+						gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + pointer * 3);
+						cout << l.ds[a[pointer]]->tensach;
+						if (pointer < dem - 1)
+							pointer++;// cap nhat lai vi tri	
+						else if (pointer == dem - 1)
+							pointer = 0;
+						HighlightLine(); // to mau thanh sang
+						gotoxy(xKeyDisplay[2] + 3, Y_Display + 3 + pointer * 3);
+						cout << l.ds[a[pointer]]->tensach;
+						NormalLine(); // tro ve mau cu
+						break;
+					case ENTER:// luu lai ket qua bien pointer va thoat
+						KT = false;
+						break;
+				}
+			}			
+			slsach = demSoLuongSach(*l.ds[a[pointer]]);
+			if (slsach == 0)
+			{
+				inThongBao("Dau sach nay khong co sach!");
+				continue;
+			}
+			system("cls");
+			gotoxy(X_TitlePage, Y_TitlePage);
+			cout << "CAC SACH THUOC DAU SACH: " << l.ds[a[pointer]]->tensach << "\n\n";
+			if (flag == 0)
+				menuXemDanhMucSach(l.ds[a[pointer]]->dms, slsach);
+			else
+				menuChonDanhMucSach(l.ds[a[pointer]]->dms, slsach);
+		}
+		else //Không tìm thấy đầu sách nào cả
+		{
+			delete[] a;
+			return dem;
+		}
+	}
+}
 
 void menuDauSach(LIST_DS& l)
 {
@@ -840,15 +1015,29 @@ void menuDauSach(LIST_DS& l)
 					ShowCur(false);
 				}
 				if (signal == 59)
-				{
-					//taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
-					system("cls");
-					//nhapDS(l, 2);
+				{	
+					//system("cls");
+					taoBangNhap("Tim sach theo ten", thongTinDS, 2, 3, 50);
+					string tuKhoa = "";
+					int kt;
+					ShowCur(true);
+					kt = nhap_ki_tu(tuKhoa, 1, 0, 15);
+					if (kt == -1) //ESC
+					{
+						xoaBangNhap();
+						xoaThongBao();
+						break;
+					}
+					int dem = timKiemDSTheoTen(l, tuKhoa, 0);
+					if (dem == 0)
+						inThongBao("Khong tim thay dau sach thich hop!");
+					gotoxy(xKeyDisplay[0], Y_Display + 1 + dem * 3); cout << setw(135) << setfill(' ') << "";
+					NormalLine();
 					inMotTrangDS(l, (trangDSHienTai - 1) * NumberPerPage);
 					veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
 					ShowCur(false);
 				}
 			}
-		}//while( _kbhit)
+		}//while(_kbhit)
 	}// while(true)
 }

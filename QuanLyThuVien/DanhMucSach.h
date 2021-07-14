@@ -4,6 +4,9 @@
 #include "DauSach.h"
 using namespace std;
 
+int trangDMSHienTai = 1;
+int soLuongTrangDMS = 0;
+string cotDMS[4] = { "STT", "Ma sach", "Trang thai", "Vi tri" };
 //=====DANH MỤC SÁCH=====
 struct danhmucsach
 {
@@ -26,6 +29,8 @@ void themLastDMS(PTR_DMS& First, node_DMS* p);
 void inDMS(PTR_DMS First);
 void taoHangNhap(int x, int y, string content, int length);
 void taoBangNhap(string title, string content[], int StartIndex, int nContent, int length);
+void menuDanhMucSach(PTR_DMS First, int slsach);
+void menuChonDanhMucSach(PTR_DMS First, int slsach);
 
 //=====CÁC THUẬT TOÁN=====
 
@@ -62,14 +67,18 @@ void themLastDMS(PTR_DMS& First, node_DMS* p)
 void inDMS(PTR_DMS First)
 {
 	int stt = 0;
-	cout << setfill(' ');
-	cout << left << setw(5) << "STT" << setw(15) << "Ma sach" << setw(30) << "Trang thai" << setw(20) << "Vi tri" << endl;
+	string trangThai = "";
 	for (PTR_DMS q = First; q != NULL; q = q->next)
 	{
-		cout << setw(5) << left << ++stt;
-		cout << setw(15) << left << q->data.masach;
-		cout << setw(30) << left << q->data.trangthai;
-		cout << setw(20) << left << q->data.vitri << endl;
+		cout << setfill(' ') << char(176) << setw(5) << left << ++stt;
+		cout << char(176) << setw(20) << left << q->data.masach;
+		if (q->data.trangthai == 0)
+			trangThai = "Cho muon duoc";
+		else if (q->data.trangthai == 1)
+			trangThai = "Da co nguoi muon";
+		else trangThai = "Da thanh ly";
+		cout << char(176) << setw(30) << left << trangThai;
+		cout << char(176) << setw(20) << left << q->data.vitri << char(176) << endl;
 	}
 }
 
@@ -95,4 +104,29 @@ void taoBangNhap(string title, string content[], int StartIndex, int nContent, i
 	}
 	gotoxy(X_Add - 2, yAdd - 1);
 	cout << char(176) << setw(length) << setfill(char(176)) << char(176) << char(176);
+}
+
+void menuXemDanhMucSach(PTR_DMS First, int slsach)
+{
+	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPage);
+	//cout << setfill(char(176)) << setw(80) << "" << endl;
+	//cout << char(176) << setfill(' ') << left << setw(5) << "STT" << char(176) << setw(20) << "Ma sach" << char(176) << setw(30) << "Trang thai" << char(176) << setw(20) << "Vi tri" << char(176) << endl;
+	//cout << setfill(char(176)) << setw(80) << "" << endl;
+	veBang(cotDMS, 4);
+	inDMS(First);
+	int signal;
+	while (true)
+	{
+		while (_kbhit())
+		{
+			signal = _getch();
+			if (signal == ESC)
+				return;
+		}
+	}
+}
+
+void menuChonDanhMucSach(PTR_DMS First, int slsach)
+{
+	
 }
