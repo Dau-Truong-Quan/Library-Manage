@@ -27,6 +27,12 @@ string ThucDon[MaxItem] = {
 					   "7. Top 10 sach muon nhieu nhat          ",
 					   "0. Thoat Chuong Trinh                   "
 };
+string MenuDG[slItemDG] = {
+					   "1. XUAT DANH SACH THEO MA               ",
+					   "2. XUAT DANH SACH THEO TEN              ",
+					   "0. THOAT                                "
+};
+
 
 /*============== CENTER MENU =============*/
 
@@ -180,6 +186,8 @@ int menu_dong(string ThucDon[], int n, int x, int y)
 			break;
 		case ENTER:// lua lai ket qua de thuc hien lenh tuong ung voi CenterMenu
 			return pointer + 1;
+		case ESC:
+			return -1;
 		}
 	}
 }
@@ -207,9 +215,87 @@ void CenterMenu()
 		switch (pointer)
 		{
 			case 1:
+			{
 				SetColor(11);
+				while (true)
+				{
+					int luaChon = menu_dong(MenuDG, slItemDG, X_CenterMenu, Y_CenterMenu);
+					NormalLine();
+					system("cls");
+					switch (luaChon)
+					{
+					case 1:
+					{
+						while (true)
+						{
+							if (dsDG == NULL)
+						{
+							inThongBao("DANH SACH TRONG");
+							Sleep(1000);
+							xoaThongBao();
+						}
+						else {
+							system("cls");
+							int luaChonDocGia = xuatDanhSachDocGia(dsDG);
+							if (luaChonDocGia == 60)
+							{
+								themDocGia(dsDG);
+							}
+							if (luaChonDocGia == F4)
+							{
+								while (true)
+								{
+									system("cls");
+									int luaChonDocGia = xuatDanhSachDocGia(dsDG); // in thêm một lần sau mỗi lần xóa
 
+									string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
+									int bienThaoTac = 0;
+									gotoxy(40, 30);
+									cout << "NHAP MA DG: ";
+									bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3); // mã độc giả dạng string
+
+									int maDocGia = 0; // mã độc giả dạng số
+									maDocGia = stringToNumber(maDocGiaString);  // hàm chuyển đổi mã độc giả
+
+									if (bienThaoTac == -1) // ESC
+										break;
+									DOCGIA* nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
+									if (nodeDG == NULL)
+									{
+
+										inThongBao("MA DOC GIA KHONG DUNG");
+										Sleep(1000);
+										xoaThongBao();
+										continue;
+									}
+									else {
+										xoaDocGia(dsDG, maDocGia);
+										ghiFileDanhSachDocGia(dsDG);
+										ghiFileDS(l);
+									}
+								}
+							}
+							if (luaChonDocGia == ESC)
+							{
+								break;
+							}
+							}
+						}
+
+					}
+					break;
+					case 2:
+					{
+						break;
+					}
+
+					default:
+						break;
+					}
+
+				}
 				break;
+			}
 			case 2:
 				SetColor(11);
 				menuDauSach(l);
@@ -219,82 +305,8 @@ void CenterMenu()
 				break;
 			case 4:
 			{
-			system("color 0B");
-			int bienThaoTac = 0; // biến kiem tra ESC cua ham nhap
-
-			do {
-
-				string ma_doc_gia_string = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
-				TREE_DG nodeDG;// lưu  độc giả tìm được
-
-
-				khoiTaoDS(nodeDG);
-				xuatDanhSachDocGia(dsDG);
-				int tungdo = 0;
-				gotoxy(40, 30);
-				cout << "NHAP MA DG";
-				bienThaoTac = nhap_ki_tu(ma_doc_gia_string, 2, 0, 0);
-
-				int l1 = ma_doc_gia_string.length();
-				int ma_doc_gia = 0;
-				ma_doc_gia = chuoi_sang_so(ma_doc_gia_string);
-
-
-
-				if (bienThaoTac == -1) // ESC
-					break;
-				nodeDG = timKiemDocGiaTheoMa(dsDG, ma_doc_gia);
-				if (nodeDG == NULL)
-				{
-
-					inThongBao("MA DOC GIA KHONG DUNG");
-					Sleep(1000);
-					xoaThongBao();
-					continue;
-				}
-				else
-				{
-				DC:
-					// hiện số sách mà độc giả đang mượn
-					system("cls");
-					gotoxy(20,5);
-					cout << "CHE DO XEM";
-					xuatSachMuon(nodeDG, l);
-					gotoxy(20, 20);
-					cout << "F2: MUON SACH -- F4: TRA SACH -- F5: MAT SACH";
-			
-					// dừng màn hinh chờ phím
-					char phimThaoTac = _getch();
-					if (phimThaoTac == 0) {
-						phimThaoTac = _getch();
-						if (phimThaoTac == 60) { // muon sach
-							MUON_SACH(dsDG, l, nodeDG);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
-						}
-						else if (phimThaoTac == 62) { // tra sach
-							traSach(  nodeDG, l, true);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
-						}
-						else if (phimThaoTac == 63) {
-							traSach(  nodeDG, l, false);
-							ghiFileDanhSachDocGia(dsDG);
-							ghiFileDS(l);
-						}
-
-					}
-					if (phimThaoTac == 27) {
-						break;
-					}
-
-					goto DC;
-
-
-
-				}
-			} while (1);
-			
+			system("color 0B");	
+			quanLiMuonTra(dsDG,l);
 			break;
 			}
 				

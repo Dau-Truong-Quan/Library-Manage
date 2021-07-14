@@ -273,8 +273,19 @@ void inThongBao(string str)
 		}
 }
 // ham chuyen doi chuỗi sang số nếu chuyển hết rt giá trị <> -1
-int chuoi_sang_so(string x)
+int stringToNumber(string x)
 {
+	for (int i = 0; i < x.length(); i++)
+	{
+		//kiểm tra nếu có 2 khoảng trắng liên tục thì xóa 1 cái đi
+		if (x[i] == ' ')
+		{
+			// xóa và trừ độ dài đi 1
+			x.erase(x.begin() + i + 1);
+			i--;
+		}
+	}
+	
 	string temp = x;
 	int n = atoi(temp.c_str());
 	if (n != 0)
