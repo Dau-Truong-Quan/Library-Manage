@@ -44,6 +44,7 @@
 #define END 79// 224
 // center menu
 const int MaxItem = 8;
+const int slItemDG = 3;
 #define X_CenterMenu 60
 #define Y_CenterMenu 5
 
