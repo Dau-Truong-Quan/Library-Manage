@@ -109,10 +109,10 @@ void taoBangNhap(string title, string content[], int StartIndex, int nContent, i
 void menuXemDanhMucSach(PTR_DMS First, int slsach)
 {
 	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPage);
-	//cout << setfill(char(176)) << setw(80) << "" << endl;
-	//cout << char(176) << setfill(' ') << left << setw(5) << "STT" << char(176) << setw(20) << "Ma sach" << char(176) << setw(30) << "Trang thai" << char(176) << setw(20) << "Vi tri" << char(176) << endl;
-	//cout << setfill(char(176)) << setw(80) << "" << endl;
-	veBang(cotDMS, 4);
+	cout << setfill(char(176)) << setw(80) << "" << endl;
+	cout << char(176) << setfill(' ') << left << setw(5) << "STT" << char(176) << setw(20) << "Ma sach" << char(176) << setw(30) << "Trang thai" << char(176) << setw(20) << "Vi tri" << char(176) << endl;
+	cout << setfill(char(176)) << setw(80) << "" << endl;
+	//veBang(cotDMS, 4);
 	inDMS(First);
 	int signal;
 	while (true)
