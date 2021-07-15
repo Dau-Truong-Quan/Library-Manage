@@ -17,6 +17,7 @@
 #define F2 60 
 #define F4 62
 #define F5 63
+#define F1 59
 using namespace std;
 
 
@@ -93,7 +94,7 @@ void themDocGia(TREE_DG& dsDG);
 int nhapDocGia(docgia& x);
 int gioiTinh(int x, int y);
 void timKiemPhanTuTheMang(TREE_DG& canXoa, TREE_DG& theMang);
-
+int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG);
 void swapDocGia(DS_TAMTHOI*& tamThoi1, DS_TAMTHOI*& tamThoi2);
 void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG);
 //DOC VA GHI FILE
@@ -332,6 +333,10 @@ int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen)
 		if (c == F4)
 		{
 			return F4;
+		}
+		if (c == F1)
+		{
+			return F1;
 		}
 		if (c == ESC)
 		{
@@ -1248,4 +1253,32 @@ void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
 			}
 		}
 	}
+}
+
+// tìm kiếm độc giả theo tên
+int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG)
+{
+
+
+	system("cls");
+	ShowCur(false);
+		
+	
+	int vitri_timthay;
+	bool KT; //biến vòng while nhỏ
+	char signal; //biến bắt phím
+	
+		for (int i = 0; i < soLuongDG; i++) //duyệt từ đầu đến cuối danh sách đầu sách
+		{
+			//tìm vị trí của chuỗi con tuKhoa trong tên độc giả
+			vitri_timthay = arr[i]->ten.find(tuKhoa);
+			if (vitri_timthay != string::npos) //npos - tương tự như null
+			{
+				xuatThongTinDocGia(arr[i]->docGia->data, 1);
+
+			}
+		}
+		 signal = _getch();
+		return 0;
+
 }

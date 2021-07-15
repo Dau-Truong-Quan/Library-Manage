@@ -275,6 +275,20 @@ void CenterMenu()
 									}
 								}
 							}
+							if (luaChonDocGia == F1)
+							{
+								DS_TAMTHOI* arr[MAX_DS]; // khai bao mảng bằng số lượng độc giả
+								int index = 0; // số lượng phần tử trong mảng
+								duyetCay(dsDG, arr, index);
+								string tenDocGia = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
+								int bienThaoTac = 0;
+								gotoxy(40, 30);
+								cout << "NHAP TEN DG: ";
+								bienThaoTac = nhap_ki_tu(tenDocGia, 0, 0, 3); // mã độc giả dạng string
+								timKiemDocGiaTheoTen(arr, tenDocGia, index);
+								if (bienThaoTac == -1) // ESC
+									break;
+							}
 							if (luaChonDocGia == ESC)
 							{
 								break;
