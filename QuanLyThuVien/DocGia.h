@@ -17,6 +17,7 @@
 #define F2 60 
 #define F4 62
 #define F5 63
+#define F1 59
 using namespace std;
 
 
@@ -80,7 +81,7 @@ void quanLiMuonTra(TREE_DG dsDG, LIST_DS l);
 // ĐỘC GIẢ
 TREE_DG timKiemDocGiaTheoMa(TREE_DG& dsDG, int maDocGia);
 void themDG(TREE_DG& dsDG, TREE_DG nodeDocGia);
-int xuatDanhSachDocGia(TREE_DG dsDG);
+int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen);
 void chuyenCaySangMang(TREE_DG dsDG, docgia* arr, int& index);
 void xuatThongTinDocGia(docgia a, int tungdo);
 int SoluongDG(TREE_DG dsDG);
@@ -93,6 +94,9 @@ void themDocGia(TREE_DG& dsDG);
 int nhapDocGia(docgia& x);
 int gioiTinh(int x, int y);
 void timKiemPhanTuTheMang(TREE_DG& canXoa, TREE_DG& theMang);
+int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG);
+void swapDocGia(DS_TAMTHOI*& tamThoi1, DS_TAMTHOI*& tamThoi2);
+void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG);
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -278,13 +282,18 @@ void AddHead(listMT& listMT, PTR_MT node)
 }
 
 // xuất danh sách độc giả
-int xuatDanhSachDocGia(TREE_DG dsDG)
+int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen)
 {
 	int n = SoluongDG(dsDG); // số lượng độc giả trong mảng
 	int t_sotrang = (n - 1) / 40 + 1;
 	DS_TAMTHOI *arr[MAX_DS] ; // khai bao mảng bằng số lượng độc giả
 	int index = 0; // số lượng phần tử trong mảng
 	duyetCay(dsDG, arr, index);
+
+	if (checkXepTheoTen == true)
+	{
+		sapXepTheoTen(arr, n);
+	}
 	int tungdo = 1; // dòng đâu tiên trong danh sách
 	for (int i = 0; i < t_sotrang; i++)
 	{
@@ -324,6 +333,10 @@ int xuatDanhSachDocGia(TREE_DG dsDG)
 		if (c == F4)
 		{
 			return F4;
+		}
+		if (c == F1)
+		{
+			return F1;
 		}
 		if (c == ESC)
 		{
@@ -1075,7 +1088,7 @@ void quanLiMuonTra(TREE_DG dsDG, LIST_DS l)
 
 
 		khoiTaoDS(nodeDG);
-		int check = xuatDanhSachDocGia(dsDG); // xuất danh sách độc giả
+		int check = xuatDanhSachDocGia(dsDG, false); // xuất danh sách độc giả
 		int tungdo = 0;
 		gotoxy(40, 30);
 		cout << "NHAP MA DG: ";
@@ -1206,4 +1219,66 @@ void timKiemPhanTuTheMang(TREE_DG& canXoa, TREE_DG &theMang )
 		canXoa = theMang;
 		theMang = theMang->right;
 	}
+}
+
+// hóa đoán vị trí trong mảng con trỏ
+void swapDocGia(DS_TAMTHOI* &tamThoi1, DS_TAMTHOI* &tamThoi2)
+{
+	DS_TAMTHOI* tamThoi;
+	tamThoi = tamThoi1;
+	tamThoi1 = tamThoi2;
+	tamThoi2 = tamThoi;
+	
+
+}
+
+// sắp xếp độc giả theo tên + họ tăng dần
+void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
+{
+	for (int i = 0; i < slDG - 1; i++)
+	{
+		for (int j = i + 1; j < slDG; j++)
+		{  // kiểm tra tên 2 đg
+			if (arr[i]->ten > arr[j]->ten)
+			{
+				// hoán đổi vị trí
+				swapDocGia(arr[i], arr[j]);
+			} // ngược lại
+			else if (arr[i]->ten == arr[j]->ten)
+			{ // kiểm tra họ 2 đg
+				if (arr[i]->ho < arr[j]->ho)
+				{ // hoán đổi vị trí
+					swapDocGia(arr[i], arr[j]);
+				}
+			}
+		}
+	}
+}
+
+// tìm kiếm độc giả theo tên
+int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG)
+{
+
+
+	system("cls");
+	ShowCur(false);
+		
+	
+	int vitri_timthay;
+	bool KT; //biến vòng while nhỏ
+	char signal; //biến bắt phím
+	
+		for (int i = 0; i < soLuongDG; i++) //duyệt từ đầu đến cuối danh sách đầu sách
+		{
+			//tìm vị trí của chuỗi con tuKhoa trong tên độc giả
+			vitri_timthay = arr[i]->ten.find(tuKhoa);
+			if (vitri_timthay != string::npos) //npos - tương tự như null
+			{
+				xuatThongTinDocGia(arr[i]->docGia->data, 1);
+
+			}
+		}
+		 signal = _getch();
+		return 0;
+
 }

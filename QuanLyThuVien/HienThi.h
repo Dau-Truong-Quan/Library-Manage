@@ -235,7 +235,7 @@ void CenterMenu()
 						}
 						else {
 							system("cls");
-							int luaChonDocGia = xuatDanhSachDocGia(dsDG);
+							int luaChonDocGia = xuatDanhSachDocGia(dsDG, false);
 							if (luaChonDocGia == 60)
 							{
 								themDocGia(dsDG);
@@ -245,7 +245,7 @@ void CenterMenu()
 								while (true)
 								{
 									system("cls");
-									int luaChonDocGia = xuatDanhSachDocGia(dsDG); // in thêm một lần sau mỗi lần xóa
+									int luaChonDocGia = xuatDanhSachDocGia(dsDG, false); // in thêm một lần sau mỗi lần xóa
 
 									string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
 									int bienThaoTac = 0;
@@ -274,6 +274,20 @@ void CenterMenu()
 									}
 								}
 							}
+							if (luaChonDocGia == F1)
+							{
+								DS_TAMTHOI* arr[MAX_DS]; // khai bao mảng bằng số lượng độc giả
+								int index = 0; // số lượng phần tử trong mảng
+								duyetCay(dsDG, arr, index);
+								string tenDocGia = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
+								int bienThaoTac = 0;
+								gotoxy(40, 30);
+								cout << "NHAP TEN DG: ";
+								bienThaoTac = nhap_ki_tu(tenDocGia, 0, 0, 3); // mã độc giả dạng string
+								timKiemDocGiaTheoTen(arr, tenDocGia, index);
+								if (bienThaoTac == -1) // ESC
+									break;
+							}
 							if (luaChonDocGia == ESC)
 							{
 								break;
@@ -285,9 +299,63 @@ void CenterMenu()
 					break;
 					case 2:
 					{
-						break;
-					}
+						while (true)
+						{
+							if (dsDG == NULL)
+							{
+								inThongBao("DANH SACH TRONG");
+								Sleep(1000);
+								xoaThongBao();
+							}
+							else {
+								system("cls");
+								int luaChonDocGia = xuatDanhSachDocGia(dsDG, true);
+								if (luaChonDocGia == 60)
+								{
+									themDocGia(dsDG);
+								}
+								if (luaChonDocGia == F4)
+								{
+									while (true)
+									{
+										system("cls");
+										int luaChonDocGia = xuatDanhSachDocGia(dsDG, true); // in thêm một lần sau mỗi lần xóa
 
+										string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
+										int bienThaoTac = 0;
+										gotoxy(40, 30);
+										cout << "NHAP MA DG: ";
+										bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3); // mã độc giả dạng string
+
+										int maDocGia = 0; // mã độc giả dạng số
+										maDocGia = stringToNumber(maDocGiaString);  // hàm chuyển đổi mã độc giả
+
+										if (bienThaoTac == -1) // ESC
+											break;
+										DOCGIA* nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
+										if (nodeDG == NULL)
+										{
+
+											inThongBao("MA DOC GIA KHONG DUNG");
+											Sleep(1000);
+											xoaThongBao();
+											continue;
+										}
+										else {
+											xoaDocGia(dsDG, maDocGia);
+											ghiFileDanhSachDocGia(dsDG);
+											ghiFileDS(l);
+										}
+									}
+								}
+								if (luaChonDocGia == ESC)
+								{
+									break;
+								}
+							}
+						}
+					}
+					break;
 					default:
 						break;
 					}
