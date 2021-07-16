@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include <string>
 #include "Date.h"
-#include "DauSach.h"
+#define MAX_DMS 9000
 using namespace std;
 
 int trangDMSHienTai = 1;
 int soLuongTrangDMS = 0;
 string cotDMS[4] = { "STT", "Ma sach", "Trang thai", "Vi tri" };
+int xKeyDisplay1[5] = { 1, 8, 25, 45, 73 };
 //=====DANH MỤC SÁCH=====
 struct danhmucsach
 {
@@ -31,6 +32,7 @@ void taoHangNhap(int x, int y, string content, int length);
 void taoBangNhap(string title, string content[], int StartIndex, int nContent, int length);
 void menuDanhMucSach(PTR_DMS First, int slsach);
 void menuChonDanhMucSach(PTR_DMS First, int slsach);
+void veBang1(string content[], int nContent);
 
 //=====CÁC THUẬT TOÁN=====
 
@@ -106,14 +108,115 @@ void taoBangNhap(string title, string content[], int StartIndex, int nContent, i
 	cout << char(176) << setw(length) << setfill(char(176)) << char(176) << char(176);
 }
 
+void veBang1(string content[], int nContent)
+{
+	//cout << setfill(char(176)) << setw(80) << "" << endl;
+	//cout << char(176) << setfill(' ') << left << setw(5) << "STT" << char(176) << setw(20) << "Ma sach" << char(176) << setw(30) << "Trang thai" << char(176) << setw(20) << "Vi tri" << char(176) << endl;
+	//cout << setfill(char(176)) << setw(80) << "" << endl;
+	//the hien ra noi dung cua cac cot
+	for (int i = 0; i < nContent; i++)
+	{// Y_Display 3
+		gotoxy(xKeyDisplay1[i] + 3, Y_Display + 1);
+		cout << content[i];
+	}
+	//ve cac duong thang de phan chia cac cot
+	for (int j = Y_Display; j <= Y_Display + 33; j++)
+	{
+		for (int i = 0; i < nContent + 1; i++)
+		{
+			gotoxy(xKeyDisplay1[i], j);
+			cout << char(176);
+		}
+	}
+	//ve thanh ngang ben tren va duoi
+	for (int i = xKeyDisplay1[0]; i <= xKeyDisplay1[nContent]; i++)
+	{
+		//ve thanh ngang ben tren so 1
+		gotoxy(i, Y_Display);
+		cout << char(176);
+
+		// ve thanh ngang ben tren so 2
+		gotoxy(i, Y_Display + 2);
+		cout << char(176);
+
+		//ve thanh ngang ben duoi
+		gotoxy(i, Y_Display + 33);
+		cout << char(176);
+	}
+}
+
+void luuChiSoCuaDMS(PTR_DMS First, PTR_DMS nodes[])
+{
+	int i = 0;
+	for (PTR_DMS p = First; p != NULL; p = p->next)
+	{
+		nodes[i] = p;
+		i++;
+	}
+}
+
+void xoaNoiDungBiDu1(int count, int nContent)
+{
+	if (count < NumberPerPageDMS)
+	{
+		for (int i = count; i < NumberPerPageDMS; i++)
+		{
+			for (int y = 0; y < nContent; y++)
+			{
+				gotoxy(xKeyDisplay1[y] + 3, Y_Display + 3 + i * 3);
+				cout << setw(xKeyDisplay1[y + 1] - xKeyDisplay1[y] - 3) << setfill(' ') << "";
+			}
+		}
+	}
+}
+
+//Xóa nội dung trang trước
+void xoaNoiDungCu1(int nContent, int locate)
+{
+	for (int i = 0; i < nContent; i++)
+	{
+		gotoxy(xKeyDisplay1[i] + 3, Y_Display + 3 + locate * 3);
+		cout << setw(xKeyDisplay1[i + 1] - xKeyDisplay1[i] - 3) << setfill(' ') << "";
+	}
+}
+
+void inMotDMS(node_DMS* s, int position, int StartIndex)
+{
+	string trangThai = "";
+	if (s->data.trangthai == 0)
+		trangThai = "Cho muon duoc";
+	else if (s->data.trangthai == 1)
+		trangThai = "Da co nguoi muon";
+	else trangThai = "Da thanh ly";
+	xoaNoiDungCu1(sizeof(cotDMS) / sizeof(string), position);// xoa dong noi dung cu truoc do
+	gotoxy(xKeyDisplay1[0] + 3, Y_Display + 3 + position * 3); cout << position + StartIndex + 1;
+	gotoxy(xKeyDisplay1[1] + 3, Y_Display + 3 + position * 3); cout << s->data.masach;
+	gotoxy(xKeyDisplay1[2] + 3, Y_Display + 3 + position * 3); cout << trangThai;
+	gotoxy(xKeyDisplay1[3] + 3, Y_Display + 3 + position * 3); cout << s->data.vitri;
+}
+
+void inMotTrangDMS(PTR_DMS nodes[], int StartIndex, int n)
+{
+	int i;
+	for (i = 0; i + StartIndex < n && i < NumberPerPageDMS; i++)
+	{
+		inMotDMS(nodes[i + StartIndex], i, StartIndex);
+	}
+	xoaNoiDungBiDu1(i, sizeof(cotDMS) / sizeof(string)); //hàm này để xóa những nội dung cũ ở trang trước trang cuối cùng, nếu trang cuối cùng không đầy
+	gotoxy(X_PageDMS, Y_PageDMS);
+	cout << setw(20) << setfill(' ') << "";
+	gotoxy(X_PageDMS, Y_PageDMS);
+	cout << " Trang " << trangDMSHienTai << "/" << soLuongTrangDMS;
+}
+
 void menuXemDanhMucSach(PTR_DMS First, int slsach)
 {
-	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPage);
-	cout << setfill(char(176)) << setw(80) << "" << endl;
-	cout << char(176) << setfill(' ') << left << setw(5) << "STT" << char(176) << setw(20) << "Ma sach" << char(176) << setw(30) << "Trang thai" << char(176) << setw(20) << "Vi tri" << char(176) << endl;
-	cout << setfill(char(176)) << setw(80) << "" << endl;
-	//veBang(cotDMS, 4);
-	inDMS(First);
+	trangDMSHienTai = 1;
+	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+	PTR_DMS nodes[MAX_DMS];
+	luuChiSoCuaDMS(First, nodes);
+	veBang1(cotDMS, 4);
+	inMotTrangDMS(nodes, 0, slsach);
 	int signal;
 	while (true)
 	{
@@ -122,6 +225,24 @@ void menuXemDanhMucSach(PTR_DMS First, int slsach)
 			signal = _getch();
 			if (signal == ESC)
 				return;
+			if (signal == 224)
+			{
+				signal = _getch();
+				if (signal == PAGE_UP)
+				{
+					if (trangDMSHienTai > 1)
+						trangDMSHienTai--;
+					else trangDMSHienTai = soLuongTrangDMS;
+					inMotTrangDMS(nodes, (trangDMSHienTai - 1) * NumberPerPageDMS, slsach);
+				}
+				else if (signal == PAGE_DOWN)
+				{
+					if (trangDMSHienTai < soLuongTrangDMS)
+						trangDMSHienTai++;
+					else trangDMSHienTai = 1;
+					inMotTrangDMS(nodes, (trangDMSHienTai - 1) * NumberPerPageDMS, slsach);
+				}
+			}
 		}
 	}
 }

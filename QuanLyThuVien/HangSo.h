@@ -43,15 +43,17 @@
 #define HOME 71
 #define END 79// 224
 // center menu
-const int MaxItem = 8;
+const int MaxItem = 7;
 const int slItemDG = 3;
 #define X_CenterMenu 60
+#define X_CenterMenu1 0
 #define Y_CenterMenu 5
 
 // so luong doc gia/sach hien thi trong 1 trang
 #define NumberPerPage 6
+#define NumberPerPageDMS 10
 // Board Menu - bang liet ke ra danh sach
-#define X_Display 50
+#define X_Display 30
 #define Y_Display 3
 // Toa do de tao ra bang them thong tin
 #define X_Add 50
@@ -59,6 +61,8 @@ const int slItemDG = 3;
 // Toa do cua phan hien thi page/ total Page
 #define X_Page 80
 #define Y_Page 26
+#define X_PageDMS 80
+#define Y_PageDMS 40
 // Toa do phan huong dan
 #define X_Tutorial 5
 #define Y_Tutorial 27

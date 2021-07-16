@@ -18,14 +18,13 @@ void CenterMenu();
 
 using namespace std;
 string ThucDon[MaxItem] = {
-					   "1. Quan ly doc gia                      ",
-					   "2. Quan ly dau sach                     ",
-					   "3. Tim kiem sach theo ten               ",
-					   "4. Quan li muon tra                     ",
-					   "5. Tra sach                             ",
-					   "6. Danh sach doc gia muon sach qua han  ",
-					   "7. Top 10 sach muon nhieu nhat          ",
-					   "0. Thoat Chuong Trinh                   "
+					   "1. Quan ly doc gia               ",
+					   "2. Quan ly dau sach              ",
+					   "3. Quan ly muon tra              ",
+					   "4. Tra sach                      ",
+					   "5. Danh sach doc gia muon qua han",
+					   "6. Top 10 sach muon nhieu nhat   ",
+					   "0. Thoat Chuong Trinh            "
 };
 string MenuDG[slItemDG] = {
 					   "1. XUAT DANH SACH THEO MA               ",
@@ -208,7 +207,7 @@ void CenterMenu()
 	bool Exit = false;// false nghia la chua thoat, van dang dung
 	
 	while (Exit == false)
-	{
+	{		
 		pointer = menu_dong(ThucDon, MaxItem, X_CenterMenu, Y_CenterMenu);
 		NormalLine();
 		system("cls");
@@ -301,23 +300,19 @@ void CenterMenu()
 				menuDauSach(l);
 				break;
 			case 3:
-				system("color 0B");				
+				system("color 0B");	
+				quanLiMuonTra(dsDG, l);
 				break;
 			case 4:
 			{
-			system("color 0B");	
-			quanLiMuonTra(dsDG,l);
-			break;
-			}
-				
+				system("color 0B");				
+				break;
+			}				
 			
 			case 5:
 				system("color 0B");
 				break;
 			case 6:
-				system("color 0B");
-				break;
-			case 7:
 				system("color 0B");
 				break;
 			case MaxItem:
