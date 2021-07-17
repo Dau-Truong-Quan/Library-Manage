@@ -43,7 +43,7 @@
 #define HOME 71
 #define END 79// 224
 // center menu
-const int MaxItem = 7;
+const int MaxItem = 6;
 const int slItemDG = 3;
 #define X_CenterMenu 60
 #define X_CenterMenu1 0
@@ -51,6 +51,7 @@ const int slItemDG = 3;
 
 // so luong doc gia/sach hien thi trong 1 trang
 #define NumberPerPage 6
+#define NumberPerPage1 6
 #define NumberPerPageDMS 10
 // Board Menu - bang liet ke ra danh sach
 #define X_Display 30

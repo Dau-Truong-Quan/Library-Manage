@@ -21,9 +21,8 @@ string ThucDon[MaxItem] = {
 					   "1. Quan ly doc gia               ",
 					   "2. Quan ly dau sach              ",
 					   "3. Quan ly muon tra              ",
-					   "4.     Khong co chuc nang        ",
-					   "5. Danh sach doc gia muon qua han",
-					   "6. Top 10 sach muon nhieu nhat   ",
+					   "4. Danh sach doc gia muon qua han",
+					   "5. Top 10 sach muon nhieu nhat   ",
 					   "0. Thoat Chuong Trinh            "
 };
 string MenuDG[slItemDG] = {
@@ -251,14 +250,9 @@ void CenterMenu()
 				quanLiMuonTra(dsDG, l);
 				break;
 			case 4:
-			{
-				system("color 0B");
-			}				
-			break;
-			case 5:
-				system("color 0B");
+				system("color 0B");	
 				break;
-			case 6:
+			case 5:
 				system("color 0B");
 				break;
 			case MaxItem:
