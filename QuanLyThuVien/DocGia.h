@@ -1301,7 +1301,7 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG)
 			vitri_timthay = arr[i]->ten.find(tuKhoa);
 			if (vitri_timthay != string::npos) //npos - tương tự như null
 			{
-				xuatThongTinDocGia(arr[vitri_timthay]->docGia->data, thuTu++);
+				xuatThongTinDocGia(arr[i]->docGia->data, thuTu++);
 				checkExist = true;
 			}
 		}
