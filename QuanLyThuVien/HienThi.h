@@ -21,7 +21,7 @@ string ThucDon[MaxItem] = {
 					   "1. Quan ly doc gia               ",
 					   "2. Quan ly dau sach              ",
 					   "3. Quan ly muon tra              ",
-					   "4. Tra sach                      ",
+					   "4.     Khong co chuc nang        ",
 					   "5. Danh sach doc gia muon qua han",
 					   "6. Top 10 sach muon nhieu nhat   ",
 					   "0. Thoat Chuong Trinh            "
@@ -209,157 +209,36 @@ void CenterMenu()
 	while (Exit == false)
 	{		
 		pointer = menu_dong(ThucDon, MaxItem, X_CenterMenu, Y_CenterMenu);
-		NormalLine();
 		system("cls");
 		switch (pointer)
 		{
 			case 1:
 			{
-				SetColor(11);
-				while (true)
+				bool vongLap = true;
+				while (vongLap)
 				{
-					int luaChon = menu_dong(MenuDG, slItemDG, X_CenterMenu, Y_CenterMenu);
-					NormalLine();
+					int luaChon = menu_dong(MenuDG, slItemDG, X_CenterMenu, Y_CenterMenu);					
 					system("cls");
+					system("color 0B");
 					switch (luaChon)
 					{
 					case 1:
 					{
-						while (true)
-						{
-							if (dsDG == NULL)
-						{
-							inThongBao("DANH SACH TRONG");
-							Sleep(1000);
-							xoaThongBao();
-						}
-						else {
-							system("cls");
-							int luaChonDocGia = xuatDanhSachDocGia(dsDG, false);
-							if (luaChonDocGia == 60)
-							{
-								themDocGia(dsDG);
-							}
-							if (luaChonDocGia == F4)
-							{
-								while (true)
-								{
-									system("cls");
-									int luaChonDocGia = xuatDanhSachDocGia(dsDG, false); // in thêm một lần sau mỗi lần xóa
-
-									string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
-									int bienThaoTac = 0;
-									gotoxy(40, 30);
-									cout << "NHAP MA DG: ";
-									bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3); // mã độc giả dạng string
-
-									int maDocGia = 0; // mã độc giả dạng số
-									maDocGia = stringToNumber(maDocGiaString);  // hàm chuyển đổi mã độc giả
-
-									if (bienThaoTac == -1) // ESC
-										break;
-									DOCGIA* nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
-									if (nodeDG == NULL)
-									{
-
-										inThongBao("MA DOC GIA KHONG DUNG");
-										Sleep(1000);
-										xoaThongBao();
-										continue;
-									}
-									else {
-										xoaDocGia(dsDG, maDocGia);
-										ghiFileDanhSachDocGia(dsDG);
-										ghiFileDS(l);
-									}
-								}
-							}
-							if (luaChonDocGia == F1)
-							{
-								DS_TAMTHOI* arr[MAX_DS]; // khai bao mảng bằng số lượng độc giả
-								int index = 0; // số lượng phần tử trong mảng
-								duyetCay(dsDG, arr, index);
-								string tenDocGia = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
-								int bienThaoTac = 0;
-								gotoxy(40, 30);
-								cout << "NHAP TEN DG: ";
-								bienThaoTac = nhap_ki_tu(tenDocGia, 0, 0, 3); // mã độc giả dạng string
-								timKiemDocGiaTheoTen(arr, tenDocGia, index);
-								if (bienThaoTac == -1) // ESC
-									break;
-							}
-							if (luaChonDocGia == ESC)
-							{
-								break;
-							}
-							}
-						}
-
+						dieuChinhDocGia(dsDG,false);
 					}
 					break;
 					case 2:
 					{
-						while (true)
-						{
-							if (dsDG == NULL)
-							{
-								inThongBao("DANH SACH TRONG");
-								Sleep(1000);
-								xoaThongBao();
-							}
-							else {
-								system("cls");
-								int luaChonDocGia = xuatDanhSachDocGia(dsDG, true);
-								if (luaChonDocGia == 60)
-								{
-									themDocGia(dsDG);
-								}
-								if (luaChonDocGia == F4)
-								{
-									while (true)
-									{
-										system("cls");
-										int luaChonDocGia = xuatDanhSachDocGia(dsDG, true); // in thêm một lần sau mỗi lần xóa
-
-										string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
-										int bienThaoTac = 0;
-										gotoxy(40, 30);
-										cout << "NHAP MA DG: ";
-										bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3); // mã độc giả dạng string
-
-										int maDocGia = 0; // mã độc giả dạng số
-										maDocGia = stringToNumber(maDocGiaString);  // hàm chuyển đổi mã độc giả
-
-										if (bienThaoTac == -1) // ESC
-											break;
-										DOCGIA* nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
-										if (nodeDG == NULL)
-										{
-
-											inThongBao("MA DOC GIA KHONG DUNG");
-											Sleep(1000);
-											xoaThongBao();
-											continue;
-										}
-										else {
-											xoaDocGia(dsDG, maDocGia);
-											ghiFileDanhSachDocGia(dsDG);
-											ghiFileDS(l);
-										}
-									}
-								}
-								if (luaChonDocGia == ESC)
-								{
-									break;
-								}
-							}
-						}
+						dieuChinhDocGia(dsDG, true);
 					}
 					break;
 					default:
+					{					
+						
+						vongLap = false;
 						break;
+					}						
 					}
-
 				}
 				break;
 			}
@@ -373,10 +252,9 @@ void CenterMenu()
 				break;
 			case 4:
 			{
-				system("color 0B");				
-				break;
+				system("color 0B");
 			}				
-			
+			break;
 			case 5:
 				system("color 0B");
 				break;

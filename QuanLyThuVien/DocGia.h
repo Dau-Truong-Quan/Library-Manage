@@ -81,13 +81,12 @@ void quanLiMuonTra(TREE_DG dsDG, LIST_DS l);
 // ĐỘC GIẢ
 TREE_DG timKiemDocGiaTheoMa(TREE_DG& dsDG, int maDocGia);
 void themDG(TREE_DG& dsDG, TREE_DG nodeDocGia);
-int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen);
 void chuyenCaySangMang(TREE_DG dsDG, docgia* arr, int& index);
 void xuatThongTinDocGia(docgia a, int tungdo);
 int SoluongDG(TREE_DG dsDG);
 bool xac_nhan(int x, int y, const char* s, string temp); 
 void ToMau(int x, int y, string a, int color);
-void ToMau2(int x, int y, int a, int color);
+void ToMau2(int x, int y, int a, bool checkHighLight);
 void ToMau3(int x, int y, Date a, int color);
 void duyetCay(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n);
 void themDocGia(TREE_DG& dsDG);
@@ -97,6 +96,14 @@ void timKiemPhanTuTheMang(TREE_DG& canXoa, TREE_DG& theMang);
 int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG);
 void swapDocGia(DS_TAMTHOI*& tamThoi1, DS_TAMTHOI*& tamThoi2);
 void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG);
+void xoaDocGia(TREE_DG& dsDG, int maDocGia);
+void xoaMotDocGia(TREE_DG& dsDG, int maDocGia);
+int SuaMotDocGia(TREE_DG& docGia);
+void hieuChinhDocGia(TREE_DG& dsDG, int ma);
+void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG);
+int menuDocGia(DS_TAMTHOI* list[], int soLuongDG, int& viTriDG);
+void dieuChinhDocGia(TREE_DG& dsDG, bool checkXepTheoTen); // thao tác trực tiếp với độc giả
+int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen); // xuất riêng bên mượn trả
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -396,7 +403,7 @@ void xuatThongTinDocGia(docgia a, int tungdo)
 	cout << "PHAI";
 	gotoxy(135, 0);
 	cout << "TRANG THAI THE";
-	SetColor(15);
+	NormalLine();
 	gotoxy(50, tungdo);
 	cout << a.mathe;
 	gotoxy(65, tungdo);
@@ -931,12 +938,24 @@ void ToMau(int x, int y, string a, int color)
 	cout << a;
 	SetColor(7);
 }
-void ToMau2(int x, int y, int a, int color)
+void ToMau2(int x, int y, int a, bool checkHighLight)
 {
-	SetColor(color);
-	gotoxy(x, y);
-	cout << a;
-	SetColor(7);
+	
+	if (checkHighLight == true)
+	{
+		/*SetColor(color);*/
+		HighlightLine();
+		gotoxy(x, y);
+		cout << a;
+		/*SetColor(7);*/
+		NormalLine();
+	}
+	else {
+		NormalLine();
+		gotoxy(x, y);
+		cout << a;
+		/*SetColor(7);*/
+	}
 }
 void ToMau3(int x, int y, Date a, int color)
 {
@@ -965,34 +984,40 @@ void duyetCay(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
 void themDocGia(TREE_DG &dsDG)
 {
 	
-	docgia docgia;
-	ifstream filein("MADOCGIA.txt");
-	ofstream filetemp("Temp.txt");
-	filein >> docgia.mathe;
-	int checkESC = nhapDocGia(docgia);
-	if (checkESC < 0) {
-		return;
-	}
-	// khởi tạo nocde độc giả
-	DOCGIA* nodeDocGia = new DOCGIA;
-	nodeDocGia->data = docgia;
-	nodeDocGia->left = nodeDocGia->right = NULL;
-	khoiTaoMuonTra(nodeDocGia->data.mt);
-	themDG(dsDG, nodeDocGia);
-	int temp;
-	while (filein >> temp)
+	while (true)
 	{
-		if (temp != docgia.mathe)
-			filetemp << temp << endl;
+		system("cls");
+		gotoxy(20, 20);
+		cout << "DANG O CHE DO THEM DOC GIA -- NHAN ESC DE THOAT";
+		docgia docgia;
+		ifstream filein("MADOCGIA.txt");
+		ofstream filetemp("Temp.txt");
+		filein >> docgia.mathe;
+		int checkESC = nhapDocGia(docgia);
+		if (checkESC < 0) {
+			return;
+		}
+		// khởi tạo nocde độc giả
+		DOCGIA* nodeDocGia = new DOCGIA;
+		nodeDocGia->data = docgia;
+		nodeDocGia->left = nodeDocGia->right = NULL;
+		khoiTaoMuonTra(nodeDocGia->data.mt);
+		themDG(dsDG, nodeDocGia);
+		int temp;
+		while (filein >> temp)
+		{
+			if (temp != docgia.mathe)
+				filetemp << temp << endl;
+		}
+		filein.close();
+		filetemp.close();
+		remove("MADOCGIA.txt");
+		rename("Temp.txt", "MADOCGIA.txt");
+		inThongBao("THEM THANH CONG");
+		Sleep(1000);
+		xoaThongBao();
+		ghiFileDanhSachDocGia(dsDG);
 	}
-	filein.close();
-	filetemp.close();
-	remove("MADOCGIA.txt");
-	rename("Temp.txt", "MADOCGIA.txt");
-	inThongBao("THEM THANH CONG");
-	Sleep(1000);
-	xoaThongBao();
-	ghiFileDanhSachDocGia(dsDG);
 
 
 }
@@ -1155,18 +1180,18 @@ void quanLiMuonTra(TREE_DG dsDG, LIST_DS l)
 }
 
 // hàm có chức năng xóa 1 độc giả bất kì theo mã độc giả
-void xoaDocGia(TREE_DG& dsDG, int maDocGia)
+void xoaMotDocGia(TREE_DG& dsDG, int maDocGia)
 {
 	if (dsDG != NULL)
 	{
 		// duyệt cây để tìm phần tử cần xóa
 		if (dsDG->data.mathe < maDocGia)
 		{
-			xoaDocGia(dsDG->right, maDocGia);
+			xoaMotDocGia(dsDG->right, maDocGia);
 		}
 		else if (dsDG->data.mathe > maDocGia)
 		{
-			xoaDocGia(dsDG->left, maDocGia);
+			xoaMotDocGia(dsDG->left, maDocGia);
 		}
 		// đã tìm được mã độc giả
 		else
@@ -1246,7 +1271,7 @@ void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
 			} // ngược lại
 			else if (arr[i]->ten == arr[j]->ten)
 			{ // kiểm tra họ 2 đg
-				if (arr[i]->ho < arr[j]->ho)
+				if (arr[i]->ho > arr[j]->ho)
 				{ // hoán đổi vị trí
 					swapDocGia(arr[i], arr[j]);
 				}
@@ -1262,11 +1287,13 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG)
 
 	system("cls");
 	ShowCur(false);
-		
-	
-	int vitri_timthay;
+	gotoxy(20, 20);
+	cout << "DANG O CHE DO TIM KIEM DOC GIA -- NHAN ESC DE THOAT";
+	int thuTu = 1;
+	int vitri_timthay ;
 	bool KT; //biến vòng while nhỏ
 	char signal; //biến bắt phím
+	bool checkExist = false;
 	
 		for (int i = 0; i < soLuongDG; i++) //duyệt từ đầu đến cuối danh sách đầu sách
 		{
@@ -1274,11 +1301,317 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG)
 			vitri_timthay = arr[i]->ten.find(tuKhoa);
 			if (vitri_timthay != string::npos) //npos - tương tự như null
 			{
-				xuatThongTinDocGia(arr[i]->docGia->data, 1);
-
+				xuatThongTinDocGia(arr[vitri_timthay]->docGia->data, thuTu++);
+				checkExist = true;
 			}
 		}
+		if (checkExist == false)
+		{
+			inThongBao("DANH SACH RONG");
+			Sleep(1000);
+			xoaThongBao();
+			return 0;
+		}
+	
 		 signal = _getch();
-		return 0;
+		
 
 }
+void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG)
+{
+	system("cls");
+	gotoxy(20, 20);
+	cout << "F1: TIM KIEM -- F2: THEM -- F4: XOA -- F5: HIEU CHINH -- ESC: THOAT";
+	gotoxy(20, 21);
+	cout << "Pg Up: TRANG KE TIEP --  Pg Dn: TRANG TRUOC";
+	int cs;
+	for (int i = 0; i + StartIndex < soLuongDG && i < NumberPerPage; i++)
+	{
+		xuatThongTinDocGia(list[i + StartIndex]->docGia->data, i+1);
+	}
+}
+int menuDocGia(DS_TAMTHOI* list[], int soLuongDG, int &viTriDG)
+{
+	ShowCur(false);
+	system("cls");
+	
+	trangDSHienTai = 1;
+	soLuongTrangDS = (int)ceil((double)soLuongDG / NumberPerPage);
+	inMotTrangDG(list, 0, soLuongDG);
+	int chon = viTriDG % NumberPerPage;
+
+	// tô màu dòng đầu tiên
+	ToMau2(50, 1, list[viTriDG + chon]->docGia->data.mathe, true);
+
+	int signal;
+	while (true)
+	{
+		while (_kbhit)
+		{
+			signal = _getch();
+			if (signal == ESC)
+				return ESC;
+			if (signal == 224)
+			{
+				signal = _getch();
+				if (signal == PAGE_UP)
+				{
+					chon = 0;
+					if (trangDSHienTai > 1)
+						trangDSHienTai--;
+					else trangDSHienTai = soLuongTrangDS;
+					int viTri = (trangDSHienTai - 1) * NumberPerPage;
+					inMotTrangDG(list, (trangDSHienTai - 1) * NumberPerPage, soLuongDG);
+					ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, true); // highligh phần dòng đầu tiên mỗi ô
+				}
+				else if (signal == PAGE_DOWN)
+				{
+					chon = 0;
+					if (trangDSHienTai < soLuongTrangDS) trangDSHienTai++;							
+					else trangDSHienTai = 1;
+					inMotTrangDG(list, (trangDSHienTai - 1) * NumberPerPage, soLuongDG);
+					int viTri = (trangDSHienTai - 1) * NumberPerPage;
+					ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, true);
+				}
+
+				else if (signal == UP && soLuongDG > 0)
+				{
+					
+					if (chon > 0)
+					{
+
+						int viTri = (trangDSHienTai - 1) * NumberPerPage;
+						ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, false);
+							chon--;
+						ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, true);
+					}
+					
+				}
+				else if (signal == DOWN)
+				{
+					if (chon < NumberPerPage - 1 && soLuongDG > 0)
+					{
+						int viTri = (trangDSHienTai - 1) * NumberPerPage;
+						ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, false);
+						if((chon + viTri) < (soLuongDG -1))
+						chon++;
+						ToMau2(50, chon + 1, list[viTri + chon]->docGia->data.mathe, true);
+					}
+				}
+				
+			}
+			if (signal == 0)
+			{
+				signal = _getch();
+				 if (signal == F1) 
+				{
+					return F1;
+				}
+				 if (signal == F2) 
+				 {
+					 return F2;
+				 }
+				 if (signal == F4)  // xóa dg
+				 {
+					 viTriDG = chon + (trangDSHienTai - 1) * NumberPerPage;
+					 return F4;
+
+				 }
+				 if (signal == F5) 
+				 {
+					 viTriDG = chon + (trangDSHienTai - 1) * NumberPerPage;
+					 return F5;
+				 }
+				
+			}
+		}
+
+	}
+}
+void dieuChinhDocGia(TREE_DG &dsDG,  bool checkXepTheoTen)
+{
+reset:
+	
+	int viTriDG = 0;
+	DS_TAMTHOI* arr[MAX_DS]; // khai bao mảng bằng số lượng độc giả
+	int index = 0; // số lượng phần tử trong mảng
+	duyetCay(dsDG, arr, index);
+	int soLuongDG = SoluongDG(dsDG);
+	if (checkXepTheoTen == true)
+	{
+		sapXepTheoTen(arr, soLuongDG);
+	}
+	
+	int thaoTacChucNang = menuDocGia(arr, soLuongDG, viTriDG );
+
+	while (true)
+	{
+		
+		if (thaoTacChucNang == ESC)
+		{
+			return;
+		}
+		if (thaoTacChucNang == F1)
+		{
+			string tenDocGia = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
+			int bienThaoTac = 0;
+			gotoxy(40, 30);
+			cout << "NHAP TEN DG: ";
+			bienThaoTac = nhap_ki_tu(tenDocGia, 0, 0, 3); // mã độc giả dạng string
+			timKiemDocGiaTheoTen(arr, tenDocGia, index);
+			goto reset;
+		}
+		if (thaoTacChucNang == F2)
+		{
+			themDocGia(dsDG);
+			goto reset;
+		}
+		if (thaoTacChucNang == F4) // xóa dg
+		{
+			xoaDocGia(dsDG , arr[viTriDG]->docGia->data.mathe);
+			goto reset;
+		}
+		if (thaoTacChucNang == F5) // chỉnh sửa
+		{
+			
+			hieuChinhDocGia(dsDG, arr[viTriDG]->docGia->data.mathe);
+			goto reset;
+		}
+		
+
+	}
+}
+void xoaDocGia(TREE_DG &dsDG, int maDocGia)
+{
+	
+		
+	gotoxy(20, 20);
+	cout << "DANG O CHE DO XOA DOC GIA -- NHAN ESC DE THOAT";
+		
+		if (xac_nhan(80, 40, "XAC NHAN XOA DOC GIA NAY ", "") == true)
+		{
+			DOCGIA* nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
+			xoaMotDocGia(dsDG, maDocGia);
+			ghiFileDanhSachDocGia(dsDG);
+		}
+		
+
+		
+		
+	
+}
+
+// hiệu chỉnh độc giả
+void hieuChinhDocGia(TREE_DG &dsDG, int ma)
+{
+
+		//string maDocGiaString = "";  // mã độc giả dạng string
+		//int bienThaoTac = 0; // biến thao tác kiếm tra các giá trị trả về khi nhập
+		//gotoxy(40, 30);
+		//cout << "NHAP MA DG: ";
+		//bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3);
+		//if (bienThaoTac < 0)
+		//{
+		//	break;
+		//}
+		//int maDocGia = 0; // mã độc giả dạng số
+		//maDocGia = stringToNumber(maDocGiaString);  // chuyển đổi mã độc giả từ dạng số sang chư
+		int maDocGia = ma; // mã độc giả dạng số
+
+		TREE_DG docGia = timKiemDocGiaTheoMa(dsDG, maDocGia);
+
+		if (docGia == NULL)
+		{
+			inThongBao("DOC GIA KHONG TON TAI");
+			Sleep(1000);
+			xoaThongBao();
+		}
+		else
+		{
+			if (SuaMotDocGia(docGia) > 0)
+			{
+				inThongBao("CHINH SUA THANH CONG");
+				Sleep(1000);
+				xoaThongBao();
+				ghiFileDanhSachDocGia(dsDG);
+			}
+			
+		}
+	
+}
+int SuaMotDocGia(TREE_DG &docGia)
+{
+
+	gotoxy(20, 20);
+	cout << "DANG O CHE DO HIEU CHINH DOC GIA -- NHAN ESC DE THOAT";
+	docgia x;
+	x = docGia->data;
+	ShowCur(true);
+	int khoangCach = 8;
+	int k = 0; // check ESC nhap
+	
+
+
+	gotoxy(X_Add - 8, Y_Add); //  xóa hàm nhập haha
+	cout << "                 ";
+	gotoxy(X_Add, Y_Add + 2);
+	cout << "MA THE: ";
+	gotoxy(X_Add, Y_Add + 4);
+	cout << "HO: " ;
+	gotoxy(X_Add + khoangCach, Y_Add + 4);
+	cout << x.ho;
+	gotoxy(X_Add, Y_Add + 6);
+	cout << "TEN: " ;
+	gotoxy(X_Add + khoangCach, Y_Add + 6);
+	cout << x.ten;
+	gotoxy(X_Add, Y_Add + 8);
+	cout << "GIOI TINH: ";
+	gotoxy(X_Add + 15, Y_Add + 8);
+	cout << "NAM ";
+	gotoxy(X_Add + 20, Y_Add + 8);
+	cout << "NU: ";
+
+	gotoxy(X_Add, Y_Add);
+	cout << "TINH TRANG: ";
+	if (docGia->data.trangthaithe == 0)
+	{
+		cout << "BI KHOA";
+	}
+	else {
+		cout << "HOAT DONG";
+	}
+	gotoxy(X_Add, Y_Add + 2);
+	cout << "MA THE: ";
+	cout << x.mathe;
+
+	gotoxy(X_Add, Y_Add + 4);
+	cout << "HO: ";
+	k = nhap_ki_tu(x.ho, 0, 2, khoangCach);
+	if (k == -1) // ESC
+		return -2;
+	
+	gotoxy(X_Add, Y_Add + 6);
+	cout << "TEN: ";
+	k = nhap_ki_tu(x.ten, 0, 3, khoangCach);
+	if (k == -1) // ESC
+		return -2;
+	gotoxy(X_Add, Y_Add + 8);
+	cout << "GIOI TINH: ";
+	int checkGioiTinh = gioiTinh(X_Add, 38);
+	if (checkGioiTinh == 1) {
+		x.phai = "NAM";
+	}
+	else if (checkGioiTinh == 2) {
+		x.phai = "NU";
+	}
+	else return -2;
+	docGia->data.ho = x.ho;
+	docGia->data.ten = x.ten;
+	docGia->data.phai = x.phai;
+	docGia->data.trangthaithe = x.trangthaithe;
+	return ENTER;
+
+	ShowCur(false);
+
+}
+

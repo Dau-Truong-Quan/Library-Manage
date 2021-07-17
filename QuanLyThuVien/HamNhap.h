@@ -286,7 +286,6 @@ int stringToNumber(string x)
 			i--;
 		}
 	}
-	
 	string temp = x;
 	int n = atoi(temp.c_str());
 	if (n != 0)
