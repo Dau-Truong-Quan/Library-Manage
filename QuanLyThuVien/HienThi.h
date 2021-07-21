@@ -250,8 +250,17 @@ void CenterMenu()
 				quanLiMuonTra(dsDG, l);
 				break;
 			case 4:
-				system("color 0B");	
+			{
+				system("color 0B");
+				while (_kbhit)
+				{
+					char c = _getch();
+					cout << "bang ma asci: " << int(c);
+					 c = _getch();
+					cout << "bang ma asci: " << int(c);
+				}
 				break;
+			}
 			case 5:
 				system("color 0B");
 				break;
