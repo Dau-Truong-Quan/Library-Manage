@@ -151,6 +151,7 @@
     <ClInclude Include="HienThi.h" />
     <ClInclude Include="MuonTra.h" />
     <ClInclude Include="mylib.h" />
+    <ClInclude Include="queue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
