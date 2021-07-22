@@ -107,6 +107,7 @@ int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen); // xuất riêng bê
 void hienThongTin1DG(docgia docgia);
 void nhapDSDG(TREE_DG& dsDG, int flag, int ma);
 void xoaHuongDan();
+int trangThaiDocGia(int x, int y, int trangThaiHienTai);
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -1942,7 +1943,7 @@ void nhapDSDG(TREE_DG& dsDG, int flag, int ma)
 		case 3:
 		{
 			xoaThongBao();
-			int checkGioiTinh = gioiTinh(X_Add, 38, docgia.phai);
+			int checkGioiTinh = gioiTinh(X_Add , 38, docgia.phai);
 			if (checkGioiTinh == 1) {
 				docgia.phai = "NAM";
 			}
@@ -1955,28 +1956,40 @@ void nhapDSDG(TREE_DG& dsDG, int flag, int ma)
 				viTri--;
 				break;
 			}
+			if (checkGioiTinh == -1) {
+				return;
+			}
 			viTri++;
 			break;
-			//xoaThongBao();
-			//kt = nhap_ki_tu(chuoi_nhap, 0, viTri, khoangCach);
-			//if (kt == -1)
-			//{
-			//	xoaBangNhap();
-			//	xoaThongBao();
-			//	return;
-			//}
-			//if (kt == KEY_UP)
-			//{
-			//	viTri--;
-			//	break;
-			//}
-			//viTri++;
-			//break;
+			
 		}
 		case 4:
 		{
 			xoaThongBao();
-			gotoxy(X_Add + khoangCach,  40);
+			int checkTrangThai = trangThaiDocGia(X_Add+ khoangCach + 4, 40, docgia.trangthaithe);
+			if (checkTrangThai == 1) {
+				docgia.trangthaithe = 1;
+			}
+			else if (checkTrangThai == 0) {
+				docgia.trangthaithe = 0;
+			}
+			if (checkTrangThai == -1) {
+				return;
+			}
+			if (checkTrangThai == KEY_UP)
+			{
+
+				viTri--;
+				break;
+			}
+			viTri++;
+			break;
+			
+		}
+		case 5:
+		{
+			xoaThongBao();
+			gotoxy(X_Add + khoangCach,  42);
 			HighlightLine();
 			cout << "ENTER";
 			nhanEnter:
@@ -1989,7 +2002,7 @@ void nhapDSDG(TREE_DG& dsDG, int flag, int ma)
 			}else
 			if (c == KEY_UP)
 			{
-				gotoxy(X_Add + khoangCach, 40);
+				gotoxy(X_Add + khoangCach, 42);
 				NormalLine();
 				cout << "ENTER";
 				viTri--;
@@ -2048,7 +2061,9 @@ void nhapDSDG(TREE_DG& dsDG, int flag, int ma)
 // hiện  thông tin độc giả
 void hienThongTin1DG(docgia docgia)
 {
+
 	int khoangCach = 8;
+	
 	gotoxy(X_Add, Y_Add + 2);
 	cout << "MA THE: ";
 	gotoxy(X_Add + khoangCach + 2, Y_Add + 2);
@@ -2067,7 +2082,14 @@ void hienThongTin1DG(docgia docgia)
 	cout << "NAM ";
 	gotoxy(X_Add + 20, Y_Add + 8);
 	cout << "NU: ";
-	gotoxy(X_Add + khoangCach, 40);
+	gotoxy(X_Add, Y_Add + 10);
+	cout << "TINH TRANG: ";
+	gotoxy(X_Add + khoangCach + 4, Y_Add + 10);
+	if (docgia.trangthaithe == 1)
+		cout << "HOAT DONG";
+	else
+		cout << "KHOA";
+	gotoxy(X_Add + khoangCach, Y_Add + 12);
 	cout << "ENTER";
 }
 // xóa hướng dẫn
@@ -2086,4 +2108,70 @@ void xoaHuongDan()
 	gotoxy(10, 25);
 	cout << "                                                 ";
 }
+// lựa chọn giới tính
+int trangThaiDocGia(int x, int y, int trangThaiHienTai)
+{
+	ShowCur(false);
+	char c;
+	// hiện khung xác nhận trả sach
+	if (trangThaiHienTai == 0)
+		goto KHOA;
+	
 
+	while (1)
+	{
+		// hiện thị đang ở lưa chọn có
+		/*gotoxy(x + 15, y ); SetColor(252); cout << "NAM";
+		gotoxy(x + 20, y); SetColor(247); cout << "NU";*/
+		
+		ToMau(x , y, "HOAT DONG", TRUE);
+
+		c = _getch();
+		// nếu nhấn enter thì trả về true để xóa
+		if (c == 13) {
+
+			return 1;
+		}
+		else if (c == 27)
+		{
+
+			return -1;
+		}
+		if (c == -32) c = _getch();
+		if (c == 77 || c == 75)
+		{
+			KHOA:
+			// nhấn di chuyển thì chuyển qua hủy ( nếu tiếp tục di chuyển thì quay về vòng lặp)
+			/*gotoxy(x + 15, y ); SetColor(247); cout << "NAM";
+			gotoxy(x + 20, y ); SetColor(252); cout << "NU";*/
+			gotoxy(x, y);
+			cout << "                    ";
+			ToMau(x , y, "KHOA", true);
+			c = _getch(); if (c == 0 || c == -32) c = _getch();
+			if (c == 13) {
+				return 0;
+			}
+			else if (c == 27) {
+				return -1;
+			}
+			else if (c == UP)
+			{
+				return UP;
+			}
+			else if (c == DOWN)
+			{
+				return DOWN;
+			}
+		}
+		else if (c == UP || c == DOWN) {
+			if (c == UP)
+			{
+				return UP;
+			}
+			else if (c == DOWN)
+			{
+				return DOWN;
+			}
+		}
+	}
+}
