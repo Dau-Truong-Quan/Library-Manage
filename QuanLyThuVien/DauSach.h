@@ -838,10 +838,11 @@ int timKiemDSTheoTen(LIST_DS l, string tuKhoa, int flag, string &masach)
 	soLuongTrangDSTimKiem = (int)ceil((double)dem / NumberPerPage1);
 	inMotTrangDSTimKiem(l, a, dem, 0);
 	veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
+	int chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+	int cs = a[pointer + chiSoBatDau];
 	//tô màu dòng đầu tiên
-	int cs = a[pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1];
 	HighlightLine();
-	inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+	inMotDS(l.ds[cs], pointer, chiSoBatDau);
 	NormalLine();
 	//=========================
 	while (true)
@@ -865,49 +866,51 @@ int timKiemDSTheoTen(LIST_DS l, string tuKhoa, int flag, string &masach)
 					if (trangDSTimKiemHienTai > 1)
 						trangDSTimKiemHienTai--;
 					else trangDSTimKiemHienTai = soLuongTrangDSTimKiem;
-					inMotTrangDSTimKiem(l, a, dem, (trangDSTimKiemHienTai - 1) * NumberPerPage);
+					chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+					inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
 					pointer = 0;
-					cs = a[pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1];
+					cs = a[pointer + chiSoBatDau];
 					HighlightLine();
-					inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+					inMotDS(l.ds[cs], pointer, chiSoBatDau);
 					NormalLine();
 					break;
 				case PAGE_DOWN:
 					if (trangDSTimKiemHienTai < soLuongTrangDSTimKiem)
 						trangDSTimKiemHienTai++;
 					else trangDSTimKiemHienTai = 1;
-					inMotTrangDSTimKiem(l, a, dem, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+					chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+					inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
 					pointer = 0;
-					cs = a[pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1];
+					cs = a[pointer + chiSoBatDau];
 					HighlightLine();
-					inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+					inMotDS(l.ds[cs], pointer, chiSoBatDau);
 					NormalLine();
 					break;
 				case KEY_UP:
 					if (pointer > 0)
 					{
 						NormalLine();
-						inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+						inMotDS(l.ds[cs], pointer, chiSoBatDau);
 						pointer--;
-						cs = a[pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1];
+						cs = a[pointer + chiSoBatDau];
 						HighlightLine();
-						inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+						inMotDS(l.ds[cs], pointer, chiSoBatDau);
 						NormalLine();
 					}
 					break;
 				case KEY_DOWN:
-					if ((pointer < NumberPerPage1 - 1) && (pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1 < dem - 1))
+					if ((pointer < NumberPerPage1 - 1) && (pointer + chiSoBatDau < dem - 1))
 					{
 						NormalLine();
-						inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+						inMotDS(l.ds[cs], pointer, chiSoBatDau);
 						pointer++;
-						cs = a[pointer + (trangDSTimKiemHienTai - 1) * NumberPerPage1];
+						cs = a[pointer + chiSoBatDau];
 						HighlightLine();
-						inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+						inMotDS(l.ds[cs], pointer, chiSoBatDau);
 						NormalLine();
 					}
 					break;
-				case ENTER:// luu lai ket qua bien pointer
+				case ENTER:// chọn đầu sách để xem sách
 					slsach = demSoLuongSach(*l.ds[cs]);
 					if (slsach == 0)
 					{
@@ -918,7 +921,7 @@ int timKiemDSTheoTen(LIST_DS l, string tuKhoa, int flag, string &masach)
 					{
 						system("cls");
 						gotoxy(X_TitlePage, Y_TitlePage);
-						cout << "CAC SACH THUOC DAU SACH: " << l.ds[cs]->tensach << "\n\n";
+						cout << "CO " << slsach << " SACH THUOC DAU SACH : " << l.ds[cs]->tensach << "\n\n";
 						if (flag == 0)
 						{
 							menuXemDanhMucSach(l.ds[cs]->dms, slsach);							
@@ -928,10 +931,10 @@ int timKiemDSTheoTen(LIST_DS l, string tuKhoa, int flag, string &masach)
 							menuChonDanhMucSach(l.ds[cs]->dms, slsach);
 						}
 						system("cls");
-						inMotTrangDSTimKiem(l, a, dem, (trangDSTimKiemHienTai - 1)* NumberPerPage1);
+						inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
 						veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
 						HighlightLine();
-						inMotDS(l.ds[cs], pointer, (trangDSTimKiemHienTai - 1) * NumberPerPage1);
+						inMotDS(l.ds[cs], pointer, chiSoBatDau);
 						NormalLine();
 					}
 			}
@@ -958,169 +961,154 @@ void menuDauSach(LIST_DS& l)
 	int sldausach; //số lượng đầu sách tìm được
 	int signal; //biến bắt phím
 	int thanhSang = 0; //thanh sáng để chọn đầu sách
-	int cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso; //index của đầu sách đang được chọn
-	//tô màu dòng đầu tiên
-	HighlightLine();
-	inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-	NormalLine();
-	//====================
+	int chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+	int cs = listTL.nodes[thanhSang + chiSoBatDau].chiso; //index của đầu sách đang được chọn
+	
 	while (true)
 	{
-		while (_kbhit())
+		//tô màu dòng được chọn
+		HighlightLine();
+		inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+		NormalLine();
+		//====================
+		signal = _getch();
+		if (signal == ESC)
 		{
-			xoaThongBao();
+			delete[] listTL.nodes;
+			return;
+		}				
+		if (signal == 224)
+		{
 			signal = _getch();
-			if (signal == ESC)
-				return;
-			if (signal == 224)
+			if (signal == PAGE_UP)
 			{
-				signal = _getch();
-				if (signal == PAGE_UP)
-				{
-					if (trangDSHienTai > 1)
-						trangDSHienTai--;
-					else trangDSHienTai = soLuongTrangDS;
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1) * NumberPerPage);
-					thanhSang = 0;
-					cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-				}
-				else if (signal == PAGE_DOWN)
-				{
-					if (trangDSHienTai < soLuongTrangDS)
-						trangDSHienTai++;
-					else trangDSHienTai = 1;
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1) * NumberPerPage);	
-					thanhSang = 0;
-					cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-				}
-				if (signal == KEY_UP)
-				{					
-					if (thanhSang > 0)
-					{
-						NormalLine();
-						inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-						thanhSang--;
-						cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-						HighlightLine();
-						inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-						NormalLine();
-					}
+				if (trangDSHienTai > 1)
+					trangDSHienTai--;
+				else trangDSHienTai = soLuongTrangDS;
+				chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				thanhSang = 0;
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
 					
-				}
-				else if (signal == KEY_DOWN)
-				{					
-					if ((thanhSang < NumberPerPage - 1) && (thanhSang + (trangDSHienTai - 1) * NumberPerPage < l.n - 1))
-					{
-						NormalLine();
-						inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-						thanhSang++;
-						cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-						HighlightLine();
-						inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-						NormalLine();
-					}
-				}
-				// them moi
-				else if (signal == INSERT) //Thêm đầu sách
-				{
-					if (l.n == MAX)
-					{
-						inThongBao("Danh sach day, khong the them");
-						break;
-					}
-					taoBangNhap("Nhap moi dau sach", thongTinDS, 1, 7, 50);
-					nhapDS(l, cs, 0);
-					delete[] listTL.nodes;
-					sapXepGiuNguyenIndex(l, listTL);
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1) * NumberPerPage);
-					cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-					ShowCur(false);
-				}// endif signal == INSERT
-
-				// xoa di
-				else if (signal == DEL) //Xóa đầu sách
-				{
-					if (l.n == 0)
-					{
-						inThongBao("Danh sach rong");
-						return;
-					}
-					
-					nhapDS(l, cs, 1);
-					delete[] listTL.nodes;
-					sapXepGiuNguyenIndex(l, listTL);
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1) * NumberPerPage);
-					cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-					ShowCur(false);
-				}//else if( signal == DEL)
-				// HOME == chinh sua
-				else if (signal == HOME) //Thêm sách
-				{
-					taoBangNhap("Nhap moi sach", thongTinDMS, 0, 4, 50);
-					nhapDMS(l, cs);
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-					ShowCur(false);
-				}// signal == HOME
 			}
-			if (signal == 0)
+			else if (signal == PAGE_DOWN)
 			{
-				signal = _getch();
-				if (signal == KEY_F2)
-				{
-					taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
-					nhapDS(l, cs, 2);
-					delete[] listTL.nodes;
-					sapXepGiuNguyenIndex(l, listTL);
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1)* NumberPerPage);
-					cs = listTL.nodes[thanhSang + (trangDSHienTai - 1) * NumberPerPage].chiso;
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1) * NumberPerPage);
-					NormalLine();
-					ShowCur(false);
-				}
-				if (signal == 59) //F1
-				{	
-					//system("cls");
-					taoBangNhap("Tim sach theo ten", thongTinDS, 2, 3, 50);
+				if (trangDSHienTai < soLuongTrangDS)
+					trangDSHienTai++;
+				else trangDSHienTai = 1;
+				chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				thanhSang = 0;
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
 					
-					ShowCur(true);
-					kt = nhap_ki_tu(tuKhoa, 1, 0, 15);
-					if (kt == -1) //ESC
-					{
-						xoaBangNhap();
-						xoaThongBao();
-						break;
-					}
-					sldausach = timKiemDSTheoTen(l, tuKhoa, 0, masach);
-					system("cls");
-
-					if (sldausach == 0)
-						inThongBao("Khong tim thay dau sach thich hop!");
-
+			}
+			if (signal == KEY_UP)
+			{					
+				if (thanhSang > 0)
+				{
 					NormalLine();
-					inMotTrangDS(l, listTL, (trangDSHienTai - 1)* NumberPerPage);					
-					veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
-					huongDan();
-					HighlightLine();
-					inMotDS(l.ds[cs], thanhSang, (trangDSHienTai - 1)* NumberPerPage);
+					inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+					thanhSang--;
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+						
+				}
+					
+			}
+			else if (signal == KEY_DOWN)
+			{					
+				if ((thanhSang < NumberPerPage - 1) && (thanhSang + chiSoBatDau < l.n - 1))
+				{
 					NormalLine();
-					ShowCur(false);
+					inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+					thanhSang++;
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+						
 				}
 			}
-		}//while(_kbhit)
+			// them moi
+			else if (signal == INSERT) //Thêm đầu sách
+			{
+				if (l.n == MAX)
+				{
+					inThongBao("Danh sach day, khong the them");
+					break;
+				}
+				taoBangNhap("Nhap moi dau sach", thongTinDS, 1, 7, 50);
+				nhapDS(l, cs, 0);
+				delete[] listTL.nodes;
+				sapXepGiuNguyenIndex(l, listTL);
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+					
+				ShowCur(false);
+			}// endif signal == INSERT
+
+			// xoa di
+			else if (signal == DEL) //Xóa đầu sách
+			{
+				if (l.n == 0)
+				{
+					inThongBao("Danh sach rong");
+					return;
+				}
+					
+				nhapDS(l, cs, 1);
+				delete[] listTL.nodes;
+				sapXepGiuNguyenIndex(l, listTL);
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+					
+				ShowCur(false);
+			}//else if( signal == DEL)
+			// HOME == chinh sua
+			else if (signal == HOME) //Thêm sách
+			{
+				taoBangNhap("Nhap moi sach", thongTinDMS, 0, 4, 50);
+				nhapDMS(l, cs);
+					
+				ShowCur(false);
+			}// signal == HOME
+		}
+		if (signal == 0)
+		{
+			signal = _getch();
+			if (signal == KEY_F2)
+			{
+				taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
+				nhapDS(l, cs, 2);
+				delete[] listTL.nodes;
+				sapXepGiuNguyenIndex(l, listTL);
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+					
+				ShowCur(false);
+			}
+			if (signal == 59) //F1
+			{	
+				//system("cls");
+				taoBangNhap("Tim sach theo ten", thongTinDS, 2, 3, 50);
+					
+				ShowCur(true);
+				kt = nhap_ki_tu(tuKhoa, 1, 0, 15);
+				if (kt == -1) //ESC
+				{
+					xoaBangNhap();
+					xoaThongBao();
+					break;
+				}
+				sldausach = timKiemDSTheoTen(l, tuKhoa, 0, masach);
+				system("cls");
+
+				if (sldausach == 0)
+					inThongBao("Khong tim thay dau sach thich hop!");
+
+				NormalLine();
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				veBang(thongTinDS, sizeof(thongTinDS) / sizeof(string));
+				huongDan();
+					
+				ShowCur(false);
+			}
+		}
 	}// while(true)
 }
