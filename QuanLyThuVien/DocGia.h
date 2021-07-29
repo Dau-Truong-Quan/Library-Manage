@@ -803,6 +803,16 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 				system("cls"); // xoá màn hình
 				gotoxy(20, 5);
 				cout << (modeTraSach == true ? "CHE DO TRA SACH" : "CHE DO MAT SACH");
+				gotoxy(45, 0);
+				cout << "Ma Sach";
+				gotoxy(60, 0);
+				cout << "Ten Sach";
+				gotoxy(100, 0);
+				cout << "Ngay Muon";
+				gotoxy(130, 0);
+				cout << "Ngay Tra";
+				gotoxy(160, 0);
+				cout << "Trang Thai";
 				for (int i = 0; i < n; i++) {  // tô màu hiện thị chọn sách cần trả trong thư viện
 
 					string temp = tachMaSach(arr[i].masach); // tách mã sách thành mã đầu sách 
@@ -1190,22 +1200,6 @@ viTri:
 			maDocGia = arr[viTriDG]->docGia->data.mathe;
 		}
 		
-		
-
-			//string maDocGiaString = "";  // mã độc giả để tí tìm kiếm thông tin độc giả
-			//TREE_DG nodeDG;// lưu  độc giả tìm được
-
-
-			//khoiTaoDS(nodeDG);
-			//int check = xuatDanhSachDocGia(dsDG, false); // xuất danh sách độc giả
-			//int tungdo = 0;
-			//gotoxy(40, 30);
-			//cout << "NHAP MA DG: ";
-			//bienThaoTac = nhap_ki_tu(maDocGiaString, 2, 0, 3); // mã độc giả dạng string
-
-			//
-			//maDocGia = stringToNumber(maDocGiaString);  // hàm chuyển đổi mã độc giả
-
 			
 			nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
 			if (nodeDG == NULL)
