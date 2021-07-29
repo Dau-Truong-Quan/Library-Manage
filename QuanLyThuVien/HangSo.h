@@ -32,6 +32,7 @@
 #define KEY_DOWN 80
 #define KEY_LEFT 75
 #define KEY_RIGHT 77
+#define KEY_F1 59
 #define KEY_F2 60
 #define KEY_F3 61
 #define KEY_F4 62
@@ -52,7 +53,7 @@ const int slItemDG = 3;
 // so luong doc gia/sach hien thi trong 1 trang
 #define NumberPerPage 6
 #define NumberPerPage1 6
-#define NumberPerPageDMS 10
+#define NumberPerPageDMS 6
 // Board Menu - bang liet ke ra danh sach
 #define X_Display 30
 #define Y_Display 3
@@ -63,7 +64,7 @@ const int slItemDG = 3;
 #define X_Page 80
 #define Y_Page 26
 #define X_PageDMS 80
-#define Y_PageDMS 40
+#define Y_PageDMS 26
 // Toa do phan huong dan
 #define X_Tutorial 5
 #define Y_Tutorial 27

@@ -127,6 +127,7 @@ int nhap_ki_tu(string& str, int flag, int viTri, int khoangCach)
 	gotoxy(X_Add + khoangCach, viTri * 2 + Y_Add);
 	cout << str;
 	char c;
+	ShowCur(true);
 	do
 	{
 
