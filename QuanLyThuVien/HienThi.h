@@ -41,7 +41,7 @@ void DrawTable()
 	cout << "CHUC NANG CHINH";
 	/*      "HOC VIEN CONG NGHE BUU CHINH VIEN THONG CO SO THANH PHO HO CHI MINH"*/
 	//ve thanh ngang ben tren va duoi
-	for (int i = xKeyDisplay[3] - 12; i < 122; i++)
+	for (int i = xKeyDisplay[2] - 12; i < 122; i++)
 	{
 
 		//ve thanh ngang ben tren so 1
@@ -59,7 +59,7 @@ void DrawTable()
 
 	for (int j = Y_Display; j < Y_Display + 25; j++)
 	{
-		gotoxy(xKeyDisplay[3] - 12, j - 2);
+		gotoxy(xKeyDisplay[2] - 12, j - 2);
 		cout << char(176);
 
 		gotoxy(122, j - 2);
@@ -144,6 +144,7 @@ int menu_dong(string ThucDon[], int n, int x, int y)
 	gotoxy(x, y + pointer * 2);
 	HighlightLine();
 	cout << ThucDon[pointer];
+	NormalLine();
 	// dieu khien chuc nang
 	char signal;
 	while (true)
@@ -168,6 +169,7 @@ int menu_dong(string ThucDon[], int n, int x, int y)
 				HighlightLine();
 				gotoxy(x, y + pointer * 2);
 				cout << ThucDon[pointer];
+				NormalLine();
 			}
 			break;
 		case KEY_DOWN:
@@ -180,6 +182,7 @@ int menu_dong(string ThucDon[], int n, int x, int y)
 				HighlightLine();
 				gotoxy(x, y + pointer * 2);
 				cout << ThucDon[pointer];
+				NormalLine();
 			}
 			break;
 		case ENTER:// lua lai ket qua de thuc hien lenh tuong ung voi CenterMenu
@@ -263,6 +266,7 @@ void CenterMenu()
 			}
 			case 5:
 				system("color 0B");
+				top10SachMuon(l);
 				break;
 			case MaxItem:
 				system("color 0B");

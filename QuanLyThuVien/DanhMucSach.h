@@ -1,13 +1,19 @@
 ﻿#pragma once
 #include <string>
+#include "mylib.h"
 #include "Date.h"
 #define MAX_DMS 9000
 using namespace std;
 
+const int topLeft = 201;
+const int topRight = 187;
+const int botLeft = 200;
+const int botRight = 188;
+
 int trangDMSHienTai = 1;
 int soLuongTrangDMS = 0;
 string cotDMS[4] = { "STT", "Ma sach", "Trang thai", "Vi tri" };
-int xKeyDisplay1[5] = { 1, 8, 25, 45, 73 };
+int xKeyDisplay1[5] = { 51, 58, 75, 95, 123 };
 //=====DANH MỤC SÁCH=====
 struct danhmucsach
 {
@@ -33,7 +39,21 @@ void taoBangNhap(string title, string content[], int StartIndex, int nContent, i
 void menuDanhMucSach(PTR_DMS First, int slsach);
 void menuChonDanhMucSach(PTR_DMS First, int slsach);
 void veBang1(string content[], int nContent);
-
+void luuChiSoCuaDMS(PTR_DMS First, PTR_DMS nodes[]);
+void xoaNoiDungBiDu1(int count, int nContent);
+void xoaNoiDungCu1(int nContent, int locate);
+void inMotDMS(node_DMS* s, int position, int StartIndex);
+void inMotTrangDMS(PTR_DMS nodes[], int StartIndex, int n);
+void menuXemDanhMucSach(PTR_DMS& First, int& slsach, bool& ktxoasua);
+void VeDuongThang_Ngang(int hang, int FirstCot, int LastCot);
+void VeDuongThang_Doc(int cot, int FirstHang, int LastHang);
+void veKhung(int x, int y, int ngang, int doc);
+int xoaDMSTheoMa(PTR_DMS& First, string ma);
+void NormalLine();
+void HighlightLine();
+int suaDMS(PTR_DMS x);
+int menu_xoa(int x, int y);
+void huongDan1();
 //=====CÁC THUẬT TOÁN=====
 
 //Khởi tạo danh sách danh mục sách
@@ -84,6 +104,139 @@ void inDMS(PTR_DMS First)
 	}
 }
 
+void NormalLine()
+{
+	SetColor(11);// aqua
+	SetBGColor(0);// black
+}
+
+// dong dang chon
+void HighlightLine()
+{
+	SetColor(0);// black
+	SetBGColor(11);// aqua     
+}
+
+int menu_xoa(int x, int y)
+{
+	// return 0 la yes - dong y, return 1 la no - tu choi
+	ShowCur(false);
+	NormalLine();
+
+	gotoxy(x, y);
+	cout << "Ban co chac chan muon xoa khong?";
+
+	char Option[2][10] = { "Co   ",
+						   "Khong" };
+	for (int i = 0; i < 2; i++)
+	{
+		gotoxy(x, y + i * 2 + 2);
+		cout << Option[i];
+	}
+	int pointer = 0;
+
+	gotoxy(x, y + pointer * 2 + 2);
+	HighlightLine();
+	cout << Option[pointer];
+	char signal;
+
+	while (true)
+	{
+		signal = _getch();
+		if (signal == 224)
+			signal = _getch();
+		switch (signal)
+		{
+		case KEY_UP:
+			if (pointer > 0)
+			{
+				NormalLine();
+				gotoxy(x, y + pointer * 2 + 2);
+				cout << Option[pointer];
+				pointer--;
+				HighlightLine();
+				gotoxy(x, y + pointer * 2 + 2);
+				cout << Option[pointer];
+			}
+			break;
+		case KEY_DOWN:
+			if (pointer < 1)
+			{
+				NormalLine();
+				gotoxy(x, y + pointer * 2 + 2);
+				cout << Option[pointer];
+				pointer++;
+				HighlightLine();
+				gotoxy(x, y + pointer * 2 + 2);
+				cout << Option[pointer];
+			}
+			break;
+		case ENTER:
+			NormalLine();
+			for (int i = 0; i < 3; i++)
+			{
+				gotoxy(x, y + i * 2);
+				cout << setw(50) << setfill(' ') << "";
+			}
+			return pointer;
+		}
+	}// while(true)
+}
+
+void VeDuongThang_Ngang(int hang, int FirstCot, int LastCot)
+{
+
+	while (FirstCot <= LastCot)
+	{
+		gotoxy(FirstCot++, hang);
+		//cout << "_";
+		putchar(205);
+	}
+}
+
+void VeDuongThang_Doc(int cot, int FirstHang, int LastHang)
+{
+
+	while (FirstHang <= LastHang)
+	{
+		gotoxy(cot, FirstHang++);
+		//cout << "|";
+		putchar(186);
+	}
+}
+
+void veKhung(int x, int y, int ngang, int doc)
+{
+
+	int firstNgang = x + 1;
+	int endNgang = x + ngang - 1;
+	int firstDoc = y + 1;
+	int endDoc = y + doc - 1;
+	VeDuongThang_Ngang(y, firstNgang, endNgang);
+	VeDuongThang_Ngang(endDoc + 1, firstNgang, endNgang);
+	VeDuongThang_Doc(x, firstDoc, endDoc);
+	VeDuongThang_Doc(endNgang + 1, firstDoc, endDoc);
+	// 4 goc;
+	gotoxy(x, y);
+	putchar(topLeft);
+	gotoxy(endNgang + 1, y);
+	putchar(topRight);
+	gotoxy(x, endDoc + 1);
+	putchar(botLeft);
+	gotoxy(endNgang + 1, endDoc + 1);
+	putchar(botRight);
+
+}
+
+void xoa(int x, int y, int ngang, int doc)
+{
+	for (int i = y; i <= y + doc; i++)
+	{
+		gotoxy(x, i);
+		cout << setw(ngang) << setfill(' ') << "";
+	}
+}
+
 //Tao 1 hang nhap thong tin
 void taoHangNhap(int x, int y, string content, int length)
 {
@@ -120,7 +273,7 @@ void veBang1(string content[], int nContent)
 		cout << content[i];
 	}
 	//ve cac duong thang de phan chia cac cot
-	for (int j = Y_Display; j <= Y_Display + 33; j++)
+	for (int j = Y_Display; j <= Y_Display + 20; j++)
 	{
 		for (int i = 0; i < nContent + 1; i++)
 		{
@@ -140,7 +293,7 @@ void veBang1(string content[], int nContent)
 		cout << char(176);
 
 		//ve thanh ngang ben duoi
-		gotoxy(i, Y_Display + 33);
+		gotoxy(i, Y_Display + 20);
 		cout << char(176);
 	}
 }
@@ -180,6 +333,30 @@ void xoaNoiDungCu1(int nContent, int locate)
 	}
 }
 
+void huongDan1()
+{
+	//SetColor(6);
+	xoa(X_Tutorial, Y_Tutorial, 15, 10);
+	cout << endl;
+	gotoxy(X_Tutorial, Y_Tutorial);
+	cout << " Huong dan ";
+	gotoxy(X_Tutorial, Y_Tutorial + 2);
+	cout << " Page Up: Len";
+	gotoxy(X_Tutorial, Y_Tutorial + 3);
+	cout << " Page Down: Xuong";
+	gotoxy(X_Tutorial, Y_Tutorial + 4);
+	cout << " Delete: Xoa sach";
+	gotoxy(X_Tutorial, Y_Tutorial + 5);
+	cout << " F2: Sua sach";
+	gotoxy(X_Tutorial, Y_Tutorial + 6);
+	cout << " ESC: Tro ve";
+
+	//SetColor(12);
+	gotoxy(X_Notification, Y_Notification);
+	cout << " Thong Bao ";
+	//NormalLine();
+}
+
 void inMotDMS(node_DMS* s, int position, int StartIndex)
 {
 	string trangThai = "";
@@ -197,6 +374,8 @@ void inMotDMS(node_DMS* s, int position, int StartIndex)
 
 void inMotTrangDMS(PTR_DMS nodes[], int StartIndex, int n)
 {
+	gotoxy(xKeyDisplay1[0], 2);
+	cout << " So luong sach : " << n << "    ";
 	int i;
 	for (i = 0; i + StartIndex < n && i < NumberPerPageDMS; i++)
 	{
@@ -209,39 +388,200 @@ void inMotTrangDMS(PTR_DMS nodes[], int StartIndex, int n)
 	cout << " Trang " << trangDMSHienTai << "/" << soLuongTrangDMS;
 }
 
-void menuXemDanhMucSach(PTR_DMS First, int slsach)
+int xoaDMSTheoMa(PTR_DMS& First, string ma)
+{
+	PTR_DMS p = First;
+	if (First == NULL) return 0;
+	if (First->data.masach.compare(ma) == 0)
+	{
+		p = First;
+		First = p->next;
+		delete p;
+		return 1;
+	}
+
+	for (p = First; p->next != NULL && p->next->data.masach.compare(ma) != 0; p = p->next);
+	if (p->next != NULL)
+	{
+		PTR_DMS q = p->next;
+		p->next = q->next;
+		delete q; return 1;
+	}
+	return 0;
+}
+
+int suaDMS(PTR_DMS x)
+{
+	danhmucsach s;
+	int kt;
+	string trangThai = "";
+	int viTri = 2;
+	s = x->data;
+	if (s.trangthai == 0)
+		trangThai = "Cho muon duoc";
+	else if (s.trangthai == 1)
+		trangThai = "Da co nguoi muon";
+	else trangThai = "Da thanh ly";
+	gotoxy(X_Add + 12, 0 * 2 + Y_Add);
+	cout << s.masach;
+	gotoxy(X_Add + 12, 1 * 2 + Y_Add);
+	cout << trangThai;
+	gotoxy(X_Add + 12, 2 * 2 + Y_Add);
+	cout << s.vitri;
+	gotoxy(X_Add + 12, 3 * 2 + Y_Add);
+	cout << "ENTER";
+	while (true)
+	{
+		switch (viTri)
+		{
+			case 2:
+			{
+				kt = nhap_ki_tu(s.vitri, 1, viTri, 12);
+				if (kt == -1) //ESC
+				{
+					xoaBangNhap();
+					xoaThongBao();
+					return 0;
+				}
+				if (kt == KEY_UP) break;
+				viTri++;
+				break;
+			}
+			case 3:
+			{
+				ShowCur(false);
+				HighlightLine();
+				gotoxy(X_Add + 12, viTri * 2 + Y_Add);
+				cout << "ENTER";
+				NormalLine();
+				kt = _getch();
+				if (kt == 27) //ESC
+				{
+					xoaBangNhap();
+					xoaThongBao();
+					return 0;
+				}
+				if (kt == KEY_UP)
+				{
+					gotoxy(X_Add + 12, viTri * 2 + Y_Add);
+					NormalLine();
+					cout << "ENTER";
+					viTri--;
+					ShowCur(true);
+					break;
+				}
+				if (kt == ENTER)
+				{
+					x->data.vitri = s.vitri;
+					inThongBao("Sua sach thanh cong!");
+					xoaBangNhap();
+					return 1;
+				}
+			}
+		}
+	}
+}
+
+void menuXemDanhMucSach(PTR_DMS& First, int& slsach, bool& ktxoasua)
 {
 	trangDMSHienTai = 1;
 	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
 	PTR_DMS nodes[MAX_DMS];
 	luuChiSoCuaDMS(First, nodes);
 	veBang1(cotDMS, 4);
+	huongDan1();
 	inMotTrangDMS(nodes, 0, slsach);
+	int kt;
+
+	int thanhSang = 0; //thanh sáng để chọn sách
+	int chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+	int cs = thanhSang + chiSoBatDau;
+
 	int signal;
 	while (true)
 	{
-		while (_kbhit())
+		//tô màu dòng được chọn
+		HighlightLine();
+		inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+		NormalLine();
+		//====================
+		signal = _getch();
+		if (signal == ESC)
+			return;
+		if (signal == 224)
 		{
 			signal = _getch();
-			if (signal == ESC)
-				return;
-			if (signal == 224)
+			if (signal == PAGE_UP)
 			{
-				signal = _getch();
-				if (signal == PAGE_UP)
+				if (trangDMSHienTai > 1)
+					trangDMSHienTai--;
+				else trangDMSHienTai = soLuongTrangDMS;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			else if (signal == PAGE_DOWN)
+			{
+				if (trangDMSHienTai < soLuongTrangDMS)
+					trangDMSHienTai++;
+				else trangDMSHienTai = 1;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			if (signal == KEY_UP)
+			{
+				if (thanhSang > 0)
 				{
-					if (trangDMSHienTai > 1)
-						trangDMSHienTai--;
-					else trangDMSHienTai = soLuongTrangDMS;
-					inMotTrangDMS(nodes, (trangDMSHienTai - 1) * NumberPerPageDMS, slsach);
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang--;
+					cs = thanhSang + chiSoBatDau;
+
 				}
-				else if (signal == PAGE_DOWN)
+			}
+			else if (signal == KEY_DOWN)
+			{
+				if ((thanhSang < NumberPerPage - 1) && (thanhSang + chiSoBatDau < slsach - 1))
 				{
-					if (trangDMSHienTai < soLuongTrangDMS)
-						trangDMSHienTai++;
-					else trangDMSHienTai = 1;
-					inMotTrangDMS(nodes, (trangDMSHienTai - 1) * NumberPerPageDMS, slsach);
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang++;
+					cs = thanhSang + chiSoBatDau;
 				}
+			}
+			else if (signal == DEL)
+			{
+				int luaChon = menu_xoa(X_Notification, Y_Notification + 1);
+				if (luaChon == 0) // Có
+				{
+					xoaDMSTheoMa(First, nodes[cs]->data.masach);
+					ktxoasua = true;
+					slsach--;
+					inThongBao("Xoa thanh cong!");
+					luuChiSoCuaDMS(First, nodes);
+					soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+					inMotTrangDMS(nodes, chiSoBatDau, slsach);
+				}
+				
+			}
+		}
+		if (signal == 0)
+		{
+			signal = _getch();
+			if (signal == KEY_F2) //Chỉnh sửa sách
+			{
+				taoBangNhap("Chinh sua thong tin sach", cotDMS, 1, 4, 50);
+				kt = suaDMS(nodes[cs]);
+				if (kt == 1)
+				{
+					ktxoasua = true;
+					inMotTrangDMS(nodes, chiSoBatDau, slsach);
+					//cs = thanhSang + chiSoBatDau;
+				}
+				ShowCur(false);
 			}
 		}
 	}
@@ -249,5 +589,5 @@ void menuXemDanhMucSach(PTR_DMS First, int slsach)
 
 void menuChonDanhMucSach(PTR_DMS First, int slsach)
 {
-	
+
 }
