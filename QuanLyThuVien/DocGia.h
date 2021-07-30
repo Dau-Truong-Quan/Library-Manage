@@ -132,6 +132,8 @@ void hienThongTin1DG(docgia docgia);
 void nhapDSDG(TREE_DG& dsDG, int flag, int ma);
 void xoaHuongDan();
 int trangThaiDocGia(int x, int y, int trangThaiHienTai);
+void checkSachDaTungMuon(TREE_DG dsDG, string maSach, bool& check);
+bool kiemTraSachDangDaMuonCuaMotDocGia(TREE_DG p, string ma_sach);
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -2135,3 +2137,37 @@ bool Pop(QUEUE& q, TREE_DG& x) // x chính là giá trị cần lấy trong DATA
 }
 
 // ===========================================   END  QUEUE
+/*
+cách sử dụng: biến check mặc định là false
+nếu hàm chạy xong check vẫn bằng flase thì sách chưa từng có người mượn
+còn nếu bị gán là true thì đã bị mượn và dừng trường trình
+*/
+void checkSachDaTungMuon(TREE_DG dsDG, string maSach, bool &check)
+{
+	if (dsDG != NULL)
+	{
+		checkSachDaTungMuon(dsDG->left, maSach, check);
+		if (kiemTraSachDangDaMuonCuaMotDocGia(dsDG, maSach) == true)
+		{
+			check = true;
+			return;
+		}
+		checkSachDaTungMuon(dsDG->right, maSach, check);
+	}// nếu cây rỗng thoát hàm
+	else return;
+	
+}
+// hàm kiểm tra sách này đã từng bị độc giả này mượn hay chưa <> rt true nếu đã từng mượn
+bool kiemTraSachDangDaMuonCuaMotDocGia(TREE_DG p, string ma_sach)
+{
+	/*string s = tachMaSach(ma_sach);
+	string temp;*/
+	for (PTR_MT q = p->data.mt.pHead; q != NULL; q = q->next)
+	{		
+			//temp = tachMaSach(q->data.masach);
+			//if (temp == s) // đang mượn cuốn sách có đầu sách tương tự
+		if(q->data.masach == ma_sach)
+				return true;		
+	}
+	return false;
+}

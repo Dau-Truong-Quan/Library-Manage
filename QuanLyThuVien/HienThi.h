@@ -255,13 +255,21 @@ void CenterMenu()
 			case 4:
 			{
 				system("color 0B");
-				while (_kbhit)
+				system("cls");
+				while (true)
 				{
-					char c = _getch();
-					cout << "bang ma asci: " << int(c);
-					 c = _getch();
-					cout << "bang ma asci: " << int(c);
+					cout << "nhap sach: ";
+					string ma;
+					bool check = false;
+					cin >> ma;
+					checkSachDaTungMuon(dsDG, ma, check);
+					if (check == true)
+						cout << " da tung";
+					else
+						cout << " chua tung";
+					
 				}
+				
 				break;
 			}
 			case 5:
