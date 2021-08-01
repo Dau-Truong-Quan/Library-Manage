@@ -59,6 +59,7 @@ struct ds_tamThoi
 	TREE_DG docGia;
 	string ho;
 	string ten;
+	int soNgayQuaHan;
 };
 typedef ds_tamThoi DS_TAMTHOI;
 
@@ -99,7 +100,7 @@ bool kiemTraQuaHan(TREE_DG docGia);
 void xuatSachMuon(TREE_DG docGia, LIST_DS l);
 void xuatThongTinMuonTra(muontra a, string ten_sach, int tungdo);
 void AddHead(listMT& listMT, PTR_MT node);
-void quanLiMuonTra(TREE_DG dsDG, LIST_DS l);
+void quanLiMuonTra(TREE_DG dsDG, LIST_DS l, bool viewMuonTra);
 
 // ĐỘC GIẢ
 TREE_DG timKiemDocGiaTheoMa(TREE_DG& dsDG, int maDocGia);
@@ -113,7 +114,6 @@ void ToMau2(int x, int y, int a, bool checkHighLight);
 void ToMau3(int x, int y, Date a, bool checkHighLight);
 void duyetCay(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n);
 void themDocGia(TREE_DG& dsDG);
-//int nhapDocGia(docgia& x);
 int gioiTinh(int x, int y, string gioiTinhHienTai);
 void timKiemPhanTuTheMang(TREE_DG& canXoa, TREE_DG& theMang);
 int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG, TREE_DG dsDG, int statusGiaoDien);
@@ -121,19 +121,20 @@ void swapDocGia(DS_TAMTHOI*& tamThoi1, DS_TAMTHOI*& tamThoi2);
 void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG);
 void xoaDocGia(TREE_DG& dsDG, int maDocGia);
 void xoaMotDocGia(TREE_DG& dsDG, int maDocGia);
-//int SuaMotDocGia(TREE_DG& docGia);
 void hieuChinhDocGia(TREE_DG& dsDG, int ma);
 void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG, int statusGiaoDien);
 int menuDocGia(DS_TAMTHOI* list[], int soLuongDG, int& viTriDG, int statusGiaoDien);
 void dieuChinhDocGia(TREE_DG& dsDG, bool checkXepTheoTen); // thao tác trực tiếp với độc giả
 int xuatDanhSachDocGia(TREE_DG dsDG, bool checkXepTheoTen); // xuất riêng bên mượn trả
-//int menuDocGiaTimKiem(DS_TAMTHOI* list[], int soLuongDG, int& viTriDG);
 void hienThongTin1DG(docgia docgia);
 void nhapDSDG(TREE_DG& dsDG, int flag, int ma);
 void xoaHuongDan();
 int trangThaiDocGia(int x, int y, int trangThaiHienTai);
 void checkSachDaTungMuon(TREE_DG dsDG, string maSach, bool& check);
 bool kiemTraSachDangDaMuonCuaMotDocGia(TREE_DG p, string ma_sach);
+void xoaXacNhan();
+void sapXepTheoNgayQuaHan(DS_TAMTHOI* arr[], int slDG);
+void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n);
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -180,45 +181,7 @@ void ghiFileDanhSachDocGia(TREE_DG t)
 // ĐẠO HÀM GHI THÔNG TIN ĐỘC GIẢ VÀO FILE
 void ghiFileDocGia(TREE_DG nodeDocGia, ofstream& fileout)
 {
-	
-	//queue<TREE_DG> bf_queue;
 
-	//bf_queue.push(nodeDocGia);
-
-	///* Vòng lặp kết thúc khi queue rỗng */
-	//while (!bf_queue.empty()) {
-	//	TREE_DG current = bf_queue.front(); // Tham chiếu trực tiếp đến phần tử đầu tiên của vùng chứa hàng đợi.
-	//	bf_queue.pop(); /* Lấy phần tử đầu tiên ra khỏi queue */
-	//	/*cout << current->data << ", ";*/
-	//	// GHI VÀO FILE ĐỘC GIẢ HIỆN TẠI
-	//	fileout << current->data.mathe << ',';
-	//	fileout << current->data.ho << ',';
-	//	fileout << current->data.ten << ',';
-	//	fileout << current->data.phai << ',';
-	//	fileout << current->data.trangthaithe << endl;
-	//	fileout << demTongSoSachDocGiaTungMuon(current->data) << endl;
-	//	for (PTR_MT p = current->data.mt.pHead; p != NULL; p = p->next)
-	//	{
-	//		fileout << p->data.masach << ',';
-	//		fileout << p->data.trangthai << ',';
-	//		fileout << p->data.ngaymuon.ngay << '/';
-	//		fileout << p->data.ngaymuon.thang << '/';
-	//		fileout << p->data.ngaymuon.nam << ',';
-	//		fileout << p->data.ngaytra.ngay << '/';
-	//		fileout << p->data.ngaytra.thang << '/';
-	//		fileout << p->data.ngaytra.nam << endl;
-	//	}
-
-	//	/* Enqueue con trái và con phải của current vào bf_queue.*/
-	//	if (current->left != NULL) {
-	//		bf_queue.push(current->left);
-	//	
-	//	}
-	//	if (current->right != NULL) {
-	//		bf_queue.push(current->right);
-	//		
-	//	}
-	//}
 	QUEUE bf_queue;
 	KhoiTaoQueue(bf_queue);
 
@@ -510,18 +473,6 @@ void xuatSachMuon(TREE_DG docGia, LIST_DS l)
 	{
 		for (int i = 0; i < l.n; i++)
 		{
-			/*for (PTR_DMS k = l.ds[i]->dms; k != NULL; k = k->next)
-			{
-				if (p->data.masach == k->data.masach)
-				{
-					if (p->data.trangthai == 0 || p->data.trangthai == 2)
-					{
-						kt++;
-						XUAT_THONG_TIN_MT(p->data, l.ds_dausach[i]->tensach, ++tungdo);
-					}
-				}
-			}*/
-
 			if (l.ds[i]->ISBN == tachMaSach(p->data.masach)) {
 				if (p->data.trangthai == 0 || p->data.trangthai == 2)
 				{
@@ -776,183 +727,249 @@ void khoiTaoThongTinMuonSach(muontra& x)
 
 void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 {
+	system("cls"); // xoá màn hình
+	NormalLine();
+	gotoxy(20, 5);
+	cout << (modeTraSach == true ? "CHE DO TRA SACH" : "CHE DO MAT SACH");
+	gotoxy(45, 0);
+	cout << "Ma Sach";
+	gotoxy(60, 0);
+	cout << "Ten Sach";
+	gotoxy(100, 0);
+	cout << "Ngay Muon";
+	gotoxy(130, 0);
+	cout << "Ngay Tra";
+	gotoxy(160, 0);
+	cout << "Trang Thai";
 	int phimThaoTac;
-	do
+	int n = demSoSachDocGiaDangMuon(docGia);
+	if (n < 1)
 	{
-		int n = demSoSachDocGiaDangMuon(docGia);
-		if (n < 1)
+		inThongBao(modeTraSach == true ? " CHUA MUON SACH MA DOI TRA" : "CHUA MUON SACH MA DOI MAT");
+		Sleep(1000);
+		xoaThongBao();
+		return;
+	}
+	bool check = false;
+	muontra* arr = new muontra[n];
+	int indexNow = 0;
+	int indexArr = 0;
+	for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next)
+	{
+		if (p->data.trangthai == 0 || p->data.trangthai == 2)
 		{
-			inThongBao(modeTraSach == true ? " CHUA MUON SACH MA DOI TRA" : "CHUA MUON SACH MA DOI MAT");
-			Sleep(1000);
-			xoaThongBao();
-			break;
+			arr[indexArr++] = p->data;
 		}
-		bool check = false;
-		muontra* arr = new muontra[n];
-		int indexNow = 0;
-		int indexArr = 0;
-		for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next)
-		{
-			if (p->data.trangthai == 0 || p->data.trangthai == 2)
-			{
-				arr[indexArr++] = p->data;
-			}
-		}
-		if (indexArr > 0)
-		{
-			while (!check)
-			{
-				system("cls"); // xoá màn hình
-				gotoxy(20, 5);
-				cout << (modeTraSach == true ? "CHE DO TRA SACH" : "CHE DO MAT SACH");
-				gotoxy(45, 0);
-				cout << "Ma Sach";
-				gotoxy(60, 0);
-				cout << "Ten Sach";
-				gotoxy(100, 0);
-				cout << "Ngay Muon";
-				gotoxy(130, 0);
-				cout << "Ngay Tra";
-				gotoxy(160, 0);
-				cout << "Trang Thai";
-				for (int i = 0; i < n; i++) {  // tô màu hiện thị chọn sách cần trả trong thư viện
-
-					string temp = tachMaSach(arr[i].masach); // tách mã sách thành mã đầu sách 
-
-					int index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
-
-					if (i == indexNow) { // nếu i bằng trạng thái được chọn thì hiện màu vàng
-
-						ToMau(45, i + 1, arr[i].masach, true); // tô màu mã sách
-
-						// tô màu ngày
-						ToMau3(100, i + 1, arr[i].ngaymuon, true);
-						ToMau3(130, i + 1, arr[i].ngaytra, true);
-
-						ToMau(60, i + 1, l.ds[index]->tensach, true); // to mau ten sACH
-
-						// tô màu trạng thái
-						if (arr[i].trangthai == 0) {
-							ToMau(160, i + 1, "DANG MUON", true);
-						}
-						else if (arr[i].trangthai == 1) {
-							ToMau(160, i + 1, "DA TRA", true);
-						}
-						else
-							ToMau(160, i + 1, "LAM MAT", true);
-					}
-					else { //  nếu i KHÔNG bằng trạng thái được chọn thì hiện màu trắng
-						ToMau(45, i + 1, arr[i].masach, false);
-						// tô màu ngày
-						ToMau3(100, i + 1, arr[i].ngaymuon, false);
-						ToMau3(130, i + 1, arr[i].ngaytra, false);
-						ToMau(60, i + 1, l.ds[index]->tensach, false);
-						if (arr[i].trangthai == 0) {
-							ToMau(160, i + 1, "DANG MUON", false);
-						}
-						else if (arr[i].trangthai == 1) {
-							ToMau(160, i + 1, "DA TRA", false);
-						}
-						else
-							ToMau(160, i + 1, "LAM MAT", false);
-					}
-				}
-				gotoxy(59, indexNow);
-				char c = _getch();
-				if (c == -32 || c == 0) { 
-					c = _getch();
-					switch (c)
-					{
-					case UP:
-					case LEFT:
-					{
-						if (indexNow == 0)
-							indexNow =( indexArr -1) ;
-						else
-							indexNow--;
-						break;
-					}
-					case DOWN:
-					case RIGHT:
-					{
-						if (indexNow == (indexArr - 1))
-							indexNow = 0;
-						else
-							indexNow++;
-						break;
-					}
-					
-					}
-				}
-				if (c == ESC) {
-					return;
-				}
-				if (c == ENTER) {
-					// kiểm tra sách này đã được bật trạng thái mất hay chưa?
-					bool kiemTraMatSach = false;
-					for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
-						if (p->data.masach == arr[indexNow].masach) {
-							if (p->data.trangthai == 2 && modeTraSach == false) {
-								inThongBao("SACH NAY DA BI MAT TRUOC DO");
-								Sleep(1000);
-								xoaThongBao();
-								kiemTraMatSach = true;
-							}
-						
-						
-						}
-						
-					}
-					if (kiemTraMatSach == true) {
-						continue;
-					}
-
-					// hộp thoại xác nhận trả hoặc mất sách
-					if (xac_nhan(80, 15, modeTraSach == true ? "XAC NHAN TRA SACH " : "XAC NHAN MAT SACH ", arr[indexNow].masach) == true)
-						check = true;
-					else check = false;
-					
-				}
-
-				if (check) {
-					if (modeTraSach == true) {
-						int dem = 0;
-						PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);
-						for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
-							if (p->data.masach == arr[indexNow].masach) {
-								p->data.trangthai = 1;
-								dms->data.trangthai = 0;
-								thoiGianThuc(p->data.ngaytra);
-							}
-							if (p->data.trangthai == 2) dem++;
-						}
-						if (dem != 0) // còn sách làm mất -> khóa thẻ
-							docGia->data.trangthaithe = 0;
-						else
-							docGia->data.trangthaithe = 1; // mở thẻ nếu trả được sách đã mất
-
-						
-					}
-					else {
-						PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);
-						for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
-							if (p->data.masach == arr[indexNow].masach) {
-								p->data.trangthai = 2;
-								dms->data.trangthai = 2;
-								docGia->data.trangthaithe = 0;
-								
-							}
-							
-						}
-					}
-				}
+	}
+	
 				
-				system("cls"); // xong các thao tác vừa mới làm
-			}
-		}
+				for (int i = 0; i < n; i++) {  
+					string temp = tachMaSach(arr[i].masach); // tách mã sách thành mã đầu sách 
+					int index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+					ToMau(45, i + 1, arr[i].masach, false); // tô màu mã sách
+					ToMau3(100, i + 1, arr[i].ngaymuon, false);// tô màu ngày
+					ToMau3(130, i + 1, arr[i].ngaytra, false);// tô màu ngày
+					ToMau(60, i + 1, l.ds[index]->tensach, false); // to mau ten sACH
+					if (arr[i].trangthai == 0) {
+						ToMau(160, i + 1, "DANG MUON", false);
+					}
+					else if (arr[i].trangthai == 1) {
+						ToMau(160, i + 1, "DA TRA", false);
+					}
+					else
+						ToMau(160, i + 1, "LAM MAT", false);
+					
+				}
 
 
-	} while (true);
+				string temp = tachMaSach(arr[indexNow].masach); // tách mã sách thành mã đầu sách 
+				int index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng		
+				ToMau(45, indexNow + 1, arr[indexNow].masach, true); // tô màu mã sách
+				ToMau3(100, indexNow + 1, arr[indexNow].ngaymuon, true);// tô màu ngày
+				ToMau3(130, indexNow + 1, arr[indexNow].ngaytra, true);// tô màu ngày
+
+				ToMau(60, indexNow +1, l.ds[index]->tensach, true); // to mau ten sACH
+				if (arr[indexNow].trangthai == 0) {
+					ToMau(160, indexNow + 1, "DANG MUON", true);
+				}
+				else if (arr[indexNow].trangthai == 1) {
+					ToMau(160, indexNow + 1, "DA TRA", true);
+				}
+				else
+					ToMau(160, indexNow + 1, "LAM MAT", true);
+				int signal;
+				while (true)
+				{
+					while (_kbhit)
+					{
+						signal = _getch();
+						if (signal == ESC)
+							return ;
+						if (signal == 224);
+							if (signal == ENTER)
+							{
+								
+									// kiểm tra sách này đã được bật trạng thái mất hay chưa?
+									bool kiemTraMatSach = false;
+									for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
+										if (p->data.masach == arr[indexNow].masach) {
+											if (p->data.trangthai == 2 && modeTraSach == false) {
+												inThongBao("SACH NAY DA BI MAT TRUOC DO");
+												Sleep(1000);
+												xoaThongBao();
+												kiemTraMatSach = true;
+											}
+
+
+										}
+
+									}
+									if (kiemTraMatSach == true) {
+										continue;
+									}
+
+									// hộp thoại xác nhận trả hoặc mất sách
+									if (xac_nhan(80, 15, modeTraSach == true ? "XAC NHAN TRA SACH " : "XAC NHAN MAT SACH ", arr[indexNow].masach) == true)
+										check = true;
+									else check = false;
+									xoaXacNhan();
+									if (check) {
+										if (modeTraSach == true) {
+											int dem = 0;
+											PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);
+											for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
+												if (p->data.masach == arr[indexNow].masach) {
+													p->data.trangthai = 1;
+													dms->data.trangthai = 0;
+													thoiGianThuc(p->data.ngaytra);
+												}
+												if (p->data.trangthai == 2) dem++;
+											}
+											if (dem != 0) // còn sách làm mất -> khóa thẻ
+												docGia->data.trangthaithe = 0;
+											else
+												docGia->data.trangthaithe = 1; // mở thẻ nếu trả được sách đã mất
+
+
+										}
+										else {
+											PTR_DMS dms = timKiemDanhMucSach(l, arr[indexNow].masach);
+											if (dms == NULL) {
+												inThongBao("SACH NAY CHI CO BAN GOC");
+												Sleep(1000);
+												xoaThongBao();
+											}
+											for (PTR_MT p = docGia->data.mt.pHead; p != NULL; p = p->next) {
+												if (p->data.masach == arr[indexNow].masach) {
+													if (p->data.trangthai == 2) {
+														inThongBao("SACH NAY DA MAT TRUOC DO");
+														Sleep(1000);
+														xoaThongBao();
+													}
+													else {
+														p->data.trangthai = 2;
+														dms->data.trangthai = 2;
+														docGia->data.trangthaithe = 0;
+													}
+
+												}
+
+											}
+										}
+									}								
+																
+							}
+
+						
+							else if (signal == UP)
+							{
+
+								if (indexNow > 0)
+								{
+									
+									
+									temp = tachMaSach(arr[indexNow].masach); // tách mã sách thành mã đầu sách 
+									index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+									ToMau(45, indexNow + 1, arr[indexNow].masach, false); // tô màu mã sách
+									ToMau3(100, indexNow + 1, arr[indexNow].ngaymuon, false);// tô màu ngày
+									ToMau3(130, indexNow + 1, arr[indexNow].ngaytra, false);// tô màu ngày
+									ToMau(60, indexNow + 1, l.ds[index]->tensach, false); // to mau ten sACH
+									if (arr[indexNow].trangthai == 0) {
+										ToMau(160, indexNow + 1, "DANG MUON", false);
+									}
+									else if (arr[indexNow].trangthai == 1) {
+										ToMau(160, indexNow + 1, "DA TRA", false);
+									}
+									else
+										ToMau(160, indexNow + 1, "LAM MAT", false);
+
+									indexNow-=1;
+
+									temp = tachMaSach(arr[indexNow].masach); // tách mã sách thành mã đầu sách 
+									index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+									ToMau(45, indexNow + 1, arr[indexNow].masach, true); // tô màu mã sách
+									ToMau3(100, indexNow + 1, arr[indexNow].ngaymuon, true);// tô màu ngày
+									ToMau3(130, indexNow + 1, arr[indexNow].ngaytra, true);// tô màu ngày
+									ToMau(60, indexNow + 1, l.ds[index]->tensach, true); // to mau ten sACH
+									if (arr[indexNow].trangthai == 0) {
+										ToMau(160, indexNow + 1, "DANG MUON", true);
+									}
+									else if (arr[indexNow].trangthai == 1) {
+										ToMau(160, indexNow + 1, "DA TRA", true);
+									}
+									else
+										ToMau(160, indexNow + 1, "LAM MAT", true);
+
+									
+								}
+
+							}
+							else if (signal == DOWN)
+							{
+								if (indexNow < n)
+								{
+									temp = tachMaSach(arr[indexNow].masach); // tách mã sách thành mã đầu sách 
+									index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+									ToMau(45, indexNow + 1, arr[indexNow].masach, false); // tô màu mã sách
+									ToMau3(100, indexNow + 1, arr[indexNow].ngaymuon, false);// tô màu ngày
+									ToMau3(130, indexNow + 1, arr[indexNow].ngaytra, false);// tô màu ngày
+									ToMau(60, indexNow + 1, l.ds[index]->tensach, false); // to mau ten sACH
+									if (arr[indexNow].trangthai == 0) {
+										ToMau(160, indexNow + 1, "DANG MUON", false);
+									}
+									else if (arr[indexNow].trangthai == 1) {
+										ToMau(160, indexNow + 1, "DA TRA", false);
+									}
+									else
+										ToMau(160, indexNow + 1, "LAM MAT", false);
+
+									indexNow+=1;
+
+									temp = tachMaSach(arr[indexNow].masach); // tách mã sách thành mã đầu sách 
+									index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+									ToMau(45, indexNow + 1, arr[indexNow].masach, true); // tô màu mã sách
+									ToMau3(100, indexNow + 1, arr[indexNow].ngaymuon, true);// tô màu ngày
+									ToMau3(130, indexNow + 1, arr[indexNow].ngaytra, true);// tô màu ngày
+									ToMau(60, indexNow + 1, l.ds[index]->tensach, true); // to mau ten sACH
+									if (arr[indexNow].trangthai == 0) {
+										ToMau(160, indexNow + 1, "DANG MUON", true);
+									}
+									else if (arr[indexNow].trangthai == 1) {
+										ToMau(160, indexNow + 1, "DA TRA", true);
+									}
+									else
+										ToMau(160, indexNow + 1, "LAM MAT", true);
+								}
+							}
+
+					}
+						
+				}
+
+				
+					
+
+
 }
 // XÁC NHẬN mượn trả
 bool xac_nhan(int x, int y, const char* s, string temp)
@@ -1162,7 +1179,7 @@ int gioiTinh(int x, int y, string gioiTinhHienTai)
 }
 
 // quản lí mượn, trả và mất sách 
-void quanLiMuonTra(TREE_DG dsDG, LIST_DS l)
+void quanLiMuonTra(TREE_DG dsDG, LIST_DS l,bool viewMuonTra)
 {
 viTri:
 	int bienThaoTac = 0; // biến kiem tra ESC cua ham nhap
@@ -1172,10 +1189,17 @@ viTri:
 	int viTriDG = 0;
 	DS_TAMTHOI* arr[MAX_DS]; // khai bao mảng bằng số lượng độc giả
 	int index = 0; // số lượng phần tử trong mảng
-	duyetCay(dsDG, arr, index);
+	if (viewMuonTra == true)
+	{
+		duyetCay(dsDG, arr, index);
+	}
+	else {
+		duyetCayQuaHan(dsDG, arr, index);
+	}
+	
 	int soLuongDG = SoluongDG(dsDG);
 	
-	int thaoTacChucNang = menuDocGia(arr, soLuongDG, viTriDG, 2);
+	int thaoTacChucNang = menuDocGia(arr, index, viTriDG, 2);
 
 	while (true)
 	{
@@ -1204,54 +1228,93 @@ viTri:
 		
 			
 			nodeDG = timKiemDocGiaTheoMa(dsDG, maDocGia);
-			if (nodeDG == NULL)
+			if (viewMuonTra == true)
 			{
+				if (nodeDG == NULL)
+				{
 
-				inThongBao("MA DOC GIA KHONG DUNG");
-				Sleep(1000);
-				xoaThongBao();
-				continue;
+					inThongBao("MA DOC GIA KHONG DUNG");
+					Sleep(1000);
+					xoaThongBao();
+					continue;
+				}
+				else
+				{
+				DC:
+					// hiện số sách mà độc giả đang mượn
+					system("cls");
+					gotoxy(20, 5);
+					cout << "CHE DO XEM";
+					xuatSachMuon(nodeDG, l);
+					gotoxy(20, 20);
+					cout << "F2: MUON SACH -- F4: TRA SACH -- F5: MAT SACH";
+
+					// dừng màn hinh chờ phím
+					char phimThaoTac = _getch();
+					if (phimThaoTac == 0) {
+						phimThaoTac = _getch();
+						if (phimThaoTac == 60) { // muon sach
+							MUON_SACH(dsDG, l, nodeDG);
+							ghiFileDanhSachDocGia(dsDG);
+							ghiFileDS(l);
+						}
+						else if (phimThaoTac == 62) { // tra sach
+							traSach(nodeDG, l, true);
+							ghiFileDanhSachDocGia(dsDG);
+							ghiFileDS(l);
+						}
+						else if (phimThaoTac == 63) {
+							traSach(nodeDG, l, false);
+							ghiFileDanhSachDocGia(dsDG);
+							ghiFileDS(l);
+						}
+
+					}
+					if (phimThaoTac == 27) {
+						goto viTri;
+					}
+
+					goto DC;
+
+
+
+				}
 			}
-			else
-			{
-			DC:
-				// hiện số sách mà độc giả đang mượn
-				system("cls");
-				gotoxy(20, 5);
-				cout << "CHE DO XEM";
-				xuatSachMuon(nodeDG, l);
+			else {
+				int i = 1;
+				system("cls"); // xoá màn hình
+				NormalLine();
 				gotoxy(20, 20);
-				cout << "F2: MUON SACH -- F4: TRA SACH -- F5: MAT SACH";
-
-				// dừng màn hinh chờ phím
-				char phimThaoTac = _getch();
-				if (phimThaoTac == 0) {
-					phimThaoTac = _getch();
-					if (phimThaoTac == 60) { // muon sach
-						MUON_SACH(dsDG, l, nodeDG);
-						ghiFileDanhSachDocGia(dsDG);
-						ghiFileDS(l);
+				cout << "NHAN ESC DE THOAT";
+				gotoxy(20, 5);
+				cout << "CHE DO XEM MAT SACH  ";
+				gotoxy(45, 0);
+				cout << "Ma Sach";
+				gotoxy(60, 0);
+				cout << "Ten Sach";
+				gotoxy(100, 0);
+				cout << "Ngay Muon";
+				gotoxy(130, 0);
+				cout << "Ngay Tra";
+				gotoxy(160, 0);
+				cout << "Trang Thai";
+				for (PTR_MT p = nodeDG->data.mt.pHead; p != NULL; p = p->next) {
+					if (p->data.trangthai == 0 && tinhSoNgay(p->data.ngaymuon) > 7)
+					{
+						string temp = tachMaSach(p->data.masach); // tách mã sách thành mã đầu sách 
+						int index = timKiemDauSachTheoMa(l, temp); // return vị trí của đầu sách trong mảng
+						ToMau(45, i, p->data.masach, false); // tô màu mã sách
+						ToMau3(100, i, p->data.ngaymuon, false);// tô màu ngày
+						ToMau3(130, i, p->data.ngaytra, false);// tô màu ngày
+						ToMau(60, i, l.ds[index]->tensach, false); // to mau ten sACH
+						ToMau(160, i, "DANG MUON", false);
+						i++;
 					}
-					else if (phimThaoTac == 62) { // tra sach
-						traSach(nodeDG, l, true);
-						ghiFileDanhSachDocGia(dsDG);
-						ghiFileDS(l);
-					}
-					else if (phimThaoTac == 63) {
-						traSach(nodeDG, l, false);
-						ghiFileDanhSachDocGia(dsDG);
-						ghiFileDS(l);
-					}
-
 				}
-				if (phimThaoTac == 27) {
-					goto viTri;
+				while (true) {
+					if (_getch() == 27)
+						goto viTri;
 				}
-
-				goto DC;
-
-
-
 			}
 		
 
@@ -1360,7 +1423,22 @@ void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
 		}
 	}
 }
-
+// sắp xếp độc giả theo ngày quá hạn
+void sapXepTheoNgayQuaHan(DS_TAMTHOI* arr[], int slDG)
+{
+	for (int i = 0; i < slDG - 1; i++)
+	{
+		for (int j = i + 1; j < slDG; j++)
+		{  // kiểm tra tên 2 đg
+			if (arr[i]->soNgayQuaHan > arr[j]->soNgayQuaHan)
+			{
+				// hoán đổi vị trí
+				swapDocGia(arr[i], arr[j]);
+			} // ngược lại
+			
+		}
+	}
+}
 
 
 //2: của giao diện tìm kiếm độc giả ở quản lí mượn trả
@@ -2170,4 +2248,43 @@ bool kiemTraSachDangDaMuonCuaMotDocGia(TREE_DG p, string ma_sach)
 				return true;		
 	}
 	return false;
+}
+
+// XOA XAC NHAN
+void xoaXacNhan()
+{
+	gotoxy(80 , 15 ); SetColor(252); cout << "                                                            ";
+	gotoxy(80 + 25, 15 + 2); SetColor(252); cout << "                           ";
+	gotoxy(80 + 30, 15 + 2); SetColor(247); cout << "                           ";
+}
+
+// -------------- duyệt cây theo NLR và đưa vào mảng
+void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
+{
+	if (ds_docGia != NULL)
+	{
+		duyetCayQuaHan(ds_docGia->left, nodes, n);
+		
+
+		int dem = 0;
+		for (PTR_MT q = ds_docGia->data.mt.pHead; q != NULL; q = q->next)
+		{
+			if (q->data.trangthai == 0) // dang muon sach
+			{
+				if (tinhSoNgay(q->data.ngaymuon) > dem)
+				{
+					dem = tinhSoNgay(q->data.ngaymuon);
+				}
+			}
+		}
+		if (dem > 0) {
+			nodes[n] = new DS_TAMTHOI;
+			nodes[n]->docGia = ds_docGia;
+			nodes[n]->ten = ds_docGia->data.ten;
+			nodes[n]->soNgayQuaHan = dem;
+			n++;
+		}
+			
+		duyetCayQuaHan(ds_docGia->right, nodes, n);
+	}
 }

@@ -249,27 +249,15 @@ void CenterMenu()
 				menuDauSach(l);
 				break;
 			case 3:
-				system("color 0B");	
-				quanLiMuonTra(dsDG, l);
+			{
+				system("color 0B");
+				quanLiMuonTra(dsDG, l,true);
 				break;
+			}
 			case 4:
 			{
 				system("color 0B");
-				system("cls");
-				while (true)
-				{
-					cout << "nhap sach: ";
-					string ma;
-					bool check = false;
-					cin >> ma;
-					checkSachDaTungMuon(dsDG, ma, check);
-					if (check == true)
-						cout << " da tung";
-					else
-						cout << " chua tung";
-					
-				}
-				
+				quanLiMuonTra(dsDG, l, false);				
 				break;
 			}
 			case 5:
