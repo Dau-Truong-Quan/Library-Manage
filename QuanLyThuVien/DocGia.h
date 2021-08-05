@@ -140,6 +140,12 @@ void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
 void ghiFileDocGia(TREE_DG q, ofstream& fileout);
 int demTongSoSachDocGiaTungMuon(docgia x);
+
+//Khai bao ham ve dau sach va sach
+void menuXemDanhMucSach(PTR_DMS& First, int& slsach, bool& ktxoasua, TREE_DG dsDG);
+void menuDauSach(LIST_DS& l, TREE_DG dsDG);
+int timKiemDSTheoTen(LIST_DS& l, string tuKhoa, int flag, string& masach, int& ktxoanhap, TREE_DG dsDG);
+
 // ===================== triển khai hàm
 
 void khoiTaoDS(TREE_DG& dsDG)
@@ -2287,4 +2293,547 @@ void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
 			
 		duyetCayQuaHan(ds_docGia->right, nodes, n);
 	}
+}
+
+void menuXemDanhMucSach(LIST_DS l, string isbn, PTR_DMS& First, int& slsach, TREE_DG dsDG)
+{
+	huongDan1();
+	int signal;
+	quay_lai:
+	veXoaBang1(cotDMS, 4, false);
+	gotoxy(xKeyDisplay1[0], 2);
+	cout << " So luong sach : " << slsach << "    ";
+	while (slsach == 0)
+	{
+		signal = _getch();
+		if (signal == ESC)
+			return;
+		if (signal == 224)
+		{
+			signal = _getch();
+			if (signal == INSERT)
+			{
+				taoBangNhap("Nhap moi sach", thongTinDMS, 0, 4, 50);
+				slsach = nhapDMS(l, isbn, First);
+				ShowCur(false);
+			}
+		}
+	}
+	trangDMSHienTai = 1;
+	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+	PTR_DMS nodes[MAX_DMS];
+	luuChiSoCuaDMS(First, nodes);
+	veXoaBang1(cotDMS, 4, true);	
+	inMotTrangDMS(nodes, 0, slsach);
+	int kt = 0;
+	string masach = "";
+	bool check = false; //biến kiểm tra xem sách đã từng được mượn hay chưa
+
+	int thanhSang = 0; //thanh sáng để chọn sách
+	int chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+	int cs = thanhSang + chiSoBatDau;
+
+	while (true)
+	{
+		//tô màu dòng được chọn
+		HighlightLine();
+		inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+		NormalLine();
+		//====================
+		signal = _getch();
+		if (signal == ESC)
+			return;
+		if (signal == 224)
+		{
+			signal = _getch();
+			if (signal == PAGE_UP)
+			{
+				if (trangDMSHienTai > 1)
+					trangDMSHienTai--;
+				else trangDMSHienTai = soLuongTrangDMS;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			else if (signal == PAGE_DOWN)
+			{
+				if (trangDMSHienTai < soLuongTrangDMS)
+					trangDMSHienTai++;
+				else trangDMSHienTai = 1;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			if (signal == KEY_UP)
+			{
+				if (thanhSang > 0)
+				{
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang--;
+					cs = thanhSang + chiSoBatDau;
+
+				}
+			}
+			else if (signal == KEY_DOWN)
+			{
+				if ((thanhSang < NumberPerPage - 1) && (thanhSang + chiSoBatDau < slsach - 1))
+				{
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang++;
+					cs = thanhSang + chiSoBatDau;
+				}
+			}
+			else if (signal == INSERT)
+			{
+				taoBangNhap("Nhap moi sach", thongTinDMS, 0, 4, 50);
+				kt = nhapDMS(l, isbn, First);
+				ShowCur(false);
+				if (kt != 0)
+				{
+					slsach += kt;
+					luuChiSoCuaDMS(First, nodes);
+					soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+					inMotTrangDMS(nodes, chiSoBatDau, slsach);
+				}
+			}
+			else if (signal == DEL)
+			{				
+				masach = nodes[cs]->data.masach;
+				checkSachDaTungMuon(dsDG, masach, check);
+				if (check == true)
+				{
+					inThongBao("Sach da tung duoc muon!");
+					check = false;
+				}					
+				else
+				{
+					int luaChon = menu_xoa(X_Notification, Y_Notification + 1);
+					if (luaChon == 0) // Có
+					{
+						xoaDMSTheoMa(First, masach);
+						slsach--;
+						inThongBao("Xoa thanh cong!");
+						ghiFileDS(l);
+						if (slsach == 0)
+							goto quay_lai;
+						else
+						{
+							luuChiSoCuaDMS(First, nodes);
+							soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+							inMotTrangDMS(nodes, chiSoBatDau, slsach);
+							trangDMSHienTai = 1;
+							thanhSang = 0;
+							cs = thanhSang + chiSoBatDau;
+						}						
+					}
+				}
+			}
+		}
+		if (signal == 0)
+		{
+			signal = _getch();
+			if (signal == KEY_F2) //Chỉnh sửa sách
+			{
+				taoBangNhap("Chinh sua thong tin sach", cotDMS, 1, 4, 50);
+				kt = suaDMS(nodes[cs]);
+				if (kt == 1)
+				{
+					inMotTrangDMS(nodes, chiSoBatDau, slsach);
+					ghiFileDS(l);
+				}				
+				ShowCur(false);
+			}
+		}
+	}
+}
+
+//Trả về số lượng đầu sách tìm được, flag = 0: in sách để xem, xóa, sửa; flag = 1: in sách để mượn
+int timKiemDSTheoTen(LIST_DS& l, string tuKhoa, int flag, string& masach, int& ktxoasua, int& slDSThem, TREE_DG dsDG)
+{
+	ShowCur(false);
+	int* a = new int[l.n]; //mảng lưu chỉ số đầu sách được tìm thấy
+	int dem; //biến lưu số lượng đầu sách được tìm thấy
+	int vitri_timthay;
+	int kt; //biến kiểm tra giá trị trả về
+	char signal; //biến bắt phím
+	int pointer; //biến thanh sáng đầu sách
+	int slsach = 0; //biến lưu số lượng sách của đầu sách được chọn
+	int chiSoBatDau;
+	int cs;
+
+timKiem:
+	pointer = 0;
+	dem = 0;
+	for (int i = 0; i < l.n; i++) //duyệt từ đầu đến cuối danh sách đầu sách để tìm
+	{
+		//tìm vị trí của chuỗi con tuKhoa trong tên đầu sách
+		vitri_timthay = l.ds[i]->tensach.find(tuKhoa);
+		if (vitri_timthay != string::npos) //npos - tương tự như null
+		{
+			a[dem] = i; //lưu lại vị trí đầu sách này
+			dem++;
+		}
+	}
+
+	if (dem == 0) //không tìm thấy đầu sách thích hợp
+	{
+		delete[] a;
+		return dem;
+	}
+
+	//nếu tìm thấy
+	//system("cls");
+	xoaNoiDungBiDu(0, 7);
+	trangDSTimKiemHienTai = 1;
+	// ceil lam tron len
+	soLuongTrangDSTimKiem = (int)ceil((double)dem / NumberPerPage1);
+	inMotTrangDSTimKiem(l, a, dem, 0);
+	veBang(thongTinDS, 7);
+	chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+	cs = a[pointer + chiSoBatDau];
+
+	while (true)
+	{
+		//tô màu dòng đầu tiên
+		HighlightLine();
+		inMotDS(l.ds[cs], pointer, chiSoBatDau);
+		NormalLine();
+		//=========================
+		signal = _getch();// kiem tra xem co nhap gi tu ban phim khong
+		if (signal == ESC)
+		{
+			delete[] a;
+			xoaBangNhap();
+			return dem;
+		}
+		else if (signal == -32)
+		{
+			signal = _getch();
+
+		}
+		else if (signal == 0)
+		{
+			signal = _getch();
+		}
+		// dieu huong
+		switch (signal)
+		{
+		case PAGE_UP:
+			if (trangDSTimKiemHienTai > 1)
+				trangDSTimKiemHienTai--;
+			else trangDSTimKiemHienTai = soLuongTrangDSTimKiem;
+			chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+			inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
+			pointer = 0;
+			cs = a[pointer + chiSoBatDau];
+
+			break;
+		case PAGE_DOWN:
+			if (trangDSTimKiemHienTai < soLuongTrangDSTimKiem)
+				trangDSTimKiemHienTai++;
+			else trangDSTimKiemHienTai = 1;
+			chiSoBatDau = (trangDSTimKiemHienTai - 1) * NumberPerPage1;
+			inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
+			pointer = 0;
+			cs = a[pointer + chiSoBatDau];
+			break;
+		case KEY_UP:
+			if (pointer > 0)
+			{
+				NormalLine();
+				inMotDS(l.ds[cs], pointer, chiSoBatDau);
+				pointer--;
+				cs = a[pointer + chiSoBatDau];
+			}
+			break;
+		case KEY_DOWN:
+			if ((pointer < NumberPerPage1 - 1) && (pointer + chiSoBatDau < dem - 1))
+			{
+				NormalLine();
+				inMotDS(l.ds[cs], pointer, chiSoBatDau);
+				pointer++;
+				cs = a[pointer + chiSoBatDau];
+			}
+			break;
+		case INSERT:
+			if (flag == 0)
+			{
+				if (l.n == MAX)
+				{
+					inThongBao("Danh sach day, khong the them");
+					break;
+				}
+				if (slDSThem == 20)
+				{
+					inThongBao("Da them sach 20 lan, hay ve trang chu de reset lai so lan");
+					break;
+				}
+				taoBangNhap("Nhap moi dau sach", thongTinDS, 1, 7, 50);
+				kt = nhapDS(l, cs, 0);
+				if (kt == 1)
+				{
+					slDSThem++;
+					ktxoasua++;
+					ghiFileDS(l);
+					goto timKiem;
+				}
+			}
+			break;
+		case DEL:
+			if (flag == 0)
+			{
+				kt = nhapDS(l, cs, 1);
+				if (kt == 1)
+				{
+					ktxoasua++;
+					ghiFileDS(l);
+					if (dem > 1)
+						goto timKiem;
+					return dem;
+				}
+			}
+			break;
+		case KEY_F2:
+			if (flag == 0)
+			{
+				taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
+				kt = nhapDS(l, cs, 2);
+				if (kt == 1)
+				{
+					ktxoasua++;
+					ghiFileDS(l);
+					goto timKiem;
+				}
+			}
+			break;
+		case ENTER:// chọn đầu sách để xem sách
+			slsach = demSoLuongSach(*l.ds[cs]);
+			system("cls");
+			//xoa(39, 0, 128, 40);
+			gotoxy(X_TitlePage, Y_TitlePage);
+			cout << "SACH THUOC DAU SACH: " << l.ds[cs]->tensach << "\n\n";
+			if (flag == 0)
+			{
+				menuXemDanhMucSach(l, l.ds[cs]->ISBN, l.ds[cs]->dms, slsach, dsDG);
+			}
+			else
+			{
+				menuChonDanhMucSach(l.ds[cs]->dms, slsach);
+			}
+			system("cls");
+			//xoa(39, 0, 128, 40);
+			inMotTrangDSTimKiem(l, a, dem, chiSoBatDau);
+			veBang(thongTinDS, 7);
+			huongDan();
+			break;
+		}
+	}
+}
+
+void menuDauSach(LIST_DS& l, TREE_DG dsDG)
+{
+	ShowCur(false);
+	//system("cls");
+	listTheLoai listTL;
+	listTL.nodes = new indexTheLoai[l.n + 20];
+	sapXepGiuNguyenIndex(l, listTL);
+	int slDSThem = 0; //biến đếm số lượng đầu sách đã thêm
+
+	trangDSHienTai = 1;
+	// ceil lam tron len
+	soLuongTrangDS = (int)ceil((double)l.n / NumberPerPage);
+	inMotTrangDS(l, listTL, 0);
+	veBang(thongTinDS, 7);
+	huongDan();
+	string tuKhoa = ""; //biến để tìm kiếm sách
+	int kt; //biến kiểm tra giá trị trả về
+	string masach;
+	int sldausach; //số lượng đầu sách tìm được
+	int slsach; //số lượng sách của đầu sách được chọn
+	int signal; //biến bắt phím
+	int thanhSang = 0; //thanh sáng để chọn đầu sách
+	int chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+	int cs = listTL.nodes[thanhSang + chiSoBatDau].chiso; //index của đầu sách đang được chọn
+	int ktxoasua;
+	while (true)
+	{
+		//tô màu dòng được chọn
+		HighlightLine();
+		inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+		NormalLine();
+		//====================
+		signal = _getch();
+		if (signal == ENTER)
+		{
+			slsach = demSoLuongSach(*l.ds[cs]);
+			system("cls");
+			//xoa(39, 0, 128, 40);
+			gotoxy(X_TitlePage, Y_TitlePage);
+			cout << "SACH THUOC DAU SACH : " << l.ds[cs]->tensach << "\n\n";
+			menuXemDanhMucSach(l, l.ds[cs]->ISBN, l.ds[cs]->dms, slsach, dsDG);
+			system("cls");
+			//xoa(39, 0, 128, 40);
+			inMotTrangDS(l, listTL, chiSoBatDau);
+			veBang(thongTinDS, 7);
+			huongDan();
+		}
+		if (signal == ESC)
+		{
+			delete[] listTL.nodes;
+			return;
+		}
+		if (signal == 224)
+		{
+			signal = _getch();
+			if (signal == PAGE_UP)
+			{
+				if (trangDSHienTai > 1)
+					trangDSHienTai--;
+				else trangDSHienTai = soLuongTrangDS;
+				chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				thanhSang = 0;
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+
+			}
+			else if (signal == PAGE_DOWN)
+			{
+				if (trangDSHienTai < soLuongTrangDS)
+					trangDSHienTai++;
+				else trangDSHienTai = 1;
+				chiSoBatDau = (trangDSHienTai - 1) * NumberPerPage;
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				thanhSang = 0;
+				cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+
+			}
+			if (signal == KEY_UP)
+			{
+				if (thanhSang > 0)
+				{
+					NormalLine();
+					inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+					thanhSang--;
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+
+				}
+
+			}
+			else if (signal == KEY_DOWN)
+			{
+				if ((thanhSang < NumberPerPage - 1) && (thanhSang + chiSoBatDau < l.n - 1))
+				{
+					NormalLine();
+					inMotDS(l.ds[cs], thanhSang, chiSoBatDau);
+					thanhSang++;
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+
+				}
+			}
+			// them moi
+			else if (signal == INSERT) //Thêm đầu sách
+			{
+				if (l.n == MAX)
+				{
+					inThongBao("Danh sach day, khong the them");
+					continue;
+				}
+				if (slDSThem == 20)
+				{
+					inThongBao("Da them sach 20 lan, hay ve trang chu de reset lai so lan");
+					continue;
+				}
+				taoBangNhap("Nhap moi dau sach", thongTinDS, 1, 7, 50);
+				kt = nhapDS(l, cs, 0);
+				if (kt == 1)
+				{
+					sapXepGiuNguyenIndex(l, listTL);
+					inMotTrangDS(l, listTL, chiSoBatDau);
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+					slDSThem++;
+				}
+				ShowCur(false);
+			}// endif signal == INSERT
+
+			// xoa di
+			else if (signal == DEL) //Xóa đầu sách
+			{
+				if (l.n == 0)
+				{
+					inThongBao("Danh sach rong");
+					continue;
+				}
+
+				kt = nhapDS(l, cs, 1);
+				if (kt == 1)
+				{
+					sapXepGiuNguyenIndex(l, listTL);
+					inMotTrangDS(l, listTL, chiSoBatDau);
+					thanhSang = 0;
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+				}
+
+				ShowCur(false);
+			}//else if( signal == DEL)
+
+		}
+		if (signal == 0)
+		{
+			signal = _getch();
+			if (signal == KEY_F2)
+			{
+				taoBangNhap("Chinh sua thong tin dau sach", thongTinDS, 1, 7, 50);
+				kt = nhapDS(l, cs, 2);
+				if (kt == 1)
+				{
+					sapXepGiuNguyenIndex(l, listTL);
+					inMotTrangDS(l, listTL, chiSoBatDau);
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+				}
+
+				ShowCur(false);
+			}
+			else if (signal == KEY_F1)
+			{
+				ktxoasua = 0;
+				//system("cls");
+				taoBangNhap("Tim sach theo ten", thongTinDS, 2, 3, 50);
+
+				ShowCur(true);
+				kt = nhap_ki_tu(tuKhoa, 1, 0, 15);
+				if (kt == -1) //ESC
+				{
+					xoaBangNhap();
+					xoaThongBao();
+					continue;
+				}
+				sldausach = timKiemDSTheoTen(l, tuKhoa, 0, masach, ktxoasua, slDSThem, dsDG);
+
+				if (sldausach == 0)
+				{
+					xoaThongBao();
+					inThongBao("Khong tim thay dau sach thich hop!");
+					xoaBangNhap();
+					continue;
+				}
+				if (ktxoasua != 0)
+				{
+					sapXepGiuNguyenIndex(l, listTL);
+					cs = listTL.nodes[thanhSang + chiSoBatDau].chiso;
+				}
+				gotoxy(1, 2);
+				cout << setw(40) << setfill(' ') << "";
+				NormalLine();
+				inMotTrangDS(l, listTL, chiSoBatDau);
+				veBang(thongTinDS, 7);
+				huongDan();
+
+				ShowCur(false);
+			}
+		}
+	}// while(true)
 }
