@@ -257,7 +257,7 @@ void CenterMenu()
 			case 4:
 			{
 				system("color 0B");
-				quanLiMuonTra(dsDG, l, false);				
+				quanLiMuonTra(dsDG, l, false);		// danh sách độc giả mượn quá hạn
 				break;
 			}
 			case 5:

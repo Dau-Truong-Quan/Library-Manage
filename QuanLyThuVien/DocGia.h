@@ -727,6 +727,7 @@ void khoiTaoThongTinMuonSach(muontra& x)
 
 void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 {
+	GO:
 	system("cls"); // xoá màn hình
 	NormalLine();
 	gotoxy(20, 5);
@@ -877,7 +878,7 @@ void traSach(TREE_DG docGia, LIST_DS l, bool modeTraSach)
 											}
 										}
 									}								
-																
+									goto GO;
 							}
 
 						
@@ -1194,7 +1195,8 @@ viTri:
 		duyetCay(dsDG, arr, index);
 	}
 	else {
-		duyetCayQuaHan(dsDG, arr, index);
+		duyetCayQuaHan(dsDG, arr, index); 
+		sapXepTheoNgayQuaHan(arr, index);
 	}
 	
 	int soLuongDG = SoluongDG(dsDG);
@@ -1280,14 +1282,14 @@ viTri:
 
 				}
 			}
-			else {
+			else { // xử lí quá hạn
 				int i = 1;
 				system("cls"); // xoá màn hình
 				NormalLine();
 				gotoxy(20, 20);
 				cout << "NHAN ESC DE THOAT";
 				gotoxy(20, 5);
-				cout << "CHE DO XEM MAT SACH  ";
+				cout << "CHE DO XEM SACH QUA HAN ";
 				gotoxy(45, 0);
 				cout << "Ma Sach";
 				gotoxy(60, 0);
@@ -1430,7 +1432,7 @@ void sapXepTheoNgayQuaHan(DS_TAMTHOI* arr[], int slDG)
 	{
 		for (int j = i + 1; j < slDG; j++)
 		{  // kiểm tra tên 2 đg
-			if (arr[i]->soNgayQuaHan > arr[j]->soNgayQuaHan)
+			if (arr[i]->soNgayQuaHan < arr[j]->soNgayQuaHan)
 			{
 				// hoán đổi vị trí
 				swapDocGia(arr[i], arr[j]);
@@ -2224,13 +2226,13 @@ void checkSachDaTungMuon(TREE_DG dsDG, string maSach, bool &check)
 {
 	if (dsDG != NULL)
 	{
-		checkSachDaTungMuon(dsDG->left, maSach, check);
-		if (kiemTraSachDangDaMuonCuaMotDocGia(dsDG, maSach) == true)
+		checkSachDaTungMuon(dsDG->left, maSach, check); // CHẠY SANG BÊN TRÁI TRƯỚC
+		if (kiemTraSachDangDaMuonCuaMotDocGia(dsDG, maSach) == true) // node
 		{
 			check = true;
 			return;
 		}
-		checkSachDaTungMuon(dsDG->right, maSach, check);
+		checkSachDaTungMuon(dsDG->right, maSach, check); // chạy sang phải 
 	}// nếu cây rỗng thoát hàm
 	else return;
 	
@@ -2244,7 +2246,7 @@ bool kiemTraSachDangDaMuonCuaMotDocGia(TREE_DG p, string ma_sach)
 	{		
 			//temp = tachMaSach(q->data.masach);
 			//if (temp == s) // đang mượn cuốn sách có đầu sách tương tự
-		if(q->data.masach == ma_sach)
+		if(q->data.masach.compare(ma_sach) == 0)
 				return true;		
 	}
 	return false;
@@ -2258,7 +2260,7 @@ void xoaXacNhan()
 	gotoxy(80 + 30, 15 + 2); SetColor(247); cout << "                           ";
 }
 
-// -------------- duyệt cây theo NLR và đưa vào mảng
+// -------------- duyệt cây theo LNR và đưa vào mảng
 void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
 {
 	if (ds_docGia != NULL)
@@ -2267,7 +2269,7 @@ void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
 		
 
 		int dem = 0;
-		for (PTR_MT q = ds_docGia->data.mt.pHead; q != NULL; q = q->next)
+		for (PTR_MT q = ds_docGia->data.mt.pHead; q != NULL; q = q->next) // duyệt từ danh sách mượn trả và kiếm sách có số ngày quá hạn cao nhất
 		{
 			if (q->data.trangthai == 0) // dang muon sach
 			{
@@ -2277,7 +2279,7 @@ void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n)
 				}
 			}
 		}
-		if (dem > 0) {
+		if (dem > 0) { // nếu số ngày quá hạn lớn 0 thì mới cho vào danh sách mảng tạm
 			nodes[n] = new DS_TAMTHOI;
 			nodes[n]->docGia = ds_docGia;
 			nodes[n]->ten = ds_docGia->data.ten;
