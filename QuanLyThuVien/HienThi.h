@@ -246,7 +246,7 @@ void CenterMenu()
 			}
 			case 2:
 				SetColor(11);
-				menuDauSach(l);
+				menuDauSach(l, dsDG);
 				break;
 			case 3:
 			{
