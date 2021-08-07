@@ -37,7 +37,7 @@ void inDMS(PTR_DMS First);
 void taoHangNhap(int x, int y, string content, int length);
 void taoBangNhap(string title, string content[], int StartIndex, int nContent, int length);
 void menuDanhMucSach(PTR_DMS First, int slsach);
-void menuChonDanhMucSach(PTR_DMS First, int slsach);
+string menuChonDanhMucSach(PTR_DMS First, int slsach);
 void veBang1(string content[], int nContent);
 void luuChiSoCuaDMS(PTR_DMS First, PTR_DMS nodes[]);
 void xoaNoiDungBiDu1(int count, int nContent);
@@ -514,7 +514,93 @@ int suaDMS(PTR_DMS x)
 	}
 }
 
-void menuChonDanhMucSach(PTR_DMS First, int slsach)
+string menuChonDanhMucSach(PTR_DMS First, int slsach)
 {
+	int signal;
+	gotoxy(xKeyDisplay1[0], 2);
+	cout << " So luong sach : " << slsach << "    ";
+	if (slsach == 0)
+	{
+		signal = _getch();
+		if (signal == ESC)
+			return "";
+	}
+	trangDMSHienTai = 1;
+	soLuongTrangDMS = (int)ceil((double)slsach / NumberPerPageDMS);
+	PTR_DMS nodes[MAX_DMS];
+	luuChiSoCuaDMS(First, nodes);
+	veXoaBang1(cotDMS, 4, true);
+	inMotTrangDMS(nodes, 0, slsach);
+	int kt = 0;
+	string masach = "";
+	bool check = false; //biến kiểm tra xem sách đã từng được mượn hay chưa
 
+	int thanhSang = 0; //thanh sáng để chọn sách
+	int chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+	int cs = thanhSang + chiSoBatDau;
+
+	while (true)
+	{
+		//tô màu dòng được chọn
+		HighlightLine();
+		inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+		NormalLine();
+		//====================
+		signal = _getch();
+		if (signal == ESC)
+		{
+			veXoaBang1(cotDMS, 4, false);
+			return "";
+		}			
+		if (signal == ENTER)
+		{
+			veXoaBang1(cotDMS, 4, false);
+			return nodes[cs]->data.masach;
+		}
+		if (signal == 224)
+		{
+			signal = _getch();
+			if (signal == PAGE_UP)
+			{
+				if (trangDMSHienTai > 1)
+					trangDMSHienTai--;
+				else trangDMSHienTai = soLuongTrangDMS;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			else if (signal == PAGE_DOWN)
+			{
+				if (trangDMSHienTai < soLuongTrangDMS)
+					trangDMSHienTai++;
+				else trangDMSHienTai = 1;
+				chiSoBatDau = (trangDMSHienTai - 1) * NumberPerPageDMS;
+				thanhSang = 0;
+				cs = thanhSang + chiSoBatDau;
+				inMotTrangDMS(nodes, chiSoBatDau, slsach);
+			}
+			if (signal == KEY_UP)
+			{
+				if (thanhSang > 0)
+				{
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang--;
+					cs = thanhSang + chiSoBatDau;
+
+				}
+			}
+			else if (signal == KEY_DOWN)
+			{
+				if ((thanhSang < NumberPerPage - 1) && (thanhSang + chiSoBatDau < slsach - 1))
+				{
+					NormalLine();
+					inMotDMS(nodes[cs], thanhSang, chiSoBatDau);
+					thanhSang++;
+					cs = thanhSang + chiSoBatDau;
+				}
+			}
+		}
+	}
 }
