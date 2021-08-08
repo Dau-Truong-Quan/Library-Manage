@@ -113,7 +113,7 @@ void introduce()
 	gotoxy(x - 2, y - 1);
 	cout << char(176) << setw(length) << setfill(char(176)) << char(176) << char(176);
 	gotoxy(98, 2);
-	cout << "Thanh vien";
+	cout << "Thanh vien gia dinh";
 	while (!_kbhit()) {
 		gotoxy(45, 32);
 		SetColor(1 + rand() % 15);

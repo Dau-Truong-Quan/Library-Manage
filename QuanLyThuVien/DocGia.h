@@ -193,7 +193,11 @@ void ghiFileDocGia(TREE_DG nodeDocGia, ofstream& fileout)
 	KhoiTaoQueue(bf_queue);
 
 	Push(bf_queue, KhoiTaoNodeQueue(nodeDocGia));
-
+	if (IsEmpty(bf_queue) == true)
+	{
+		cout << "\nDANH SACH DANG RONG KIA";
+		return;
+	}
 	while (IsEmpty(bf_queue) == false)
 	{
 		TREE_DG current;
@@ -229,11 +233,7 @@ void ghiFileDocGia(TREE_DG nodeDocGia, ofstream& fileout)
 		
 	}
 
-	if (IsEmpty(bf_queue) == true)
-	{
-		cout << "\nDANH SACH DANG RONG KIA";
-		return;
-	}
+	
 	
 }
 // ĐỌC FILE ĐỘC GIẢ
@@ -707,7 +707,6 @@ bool kiemTraQuaHan(TREE_DG docGia)
 		if (q->data.trangthai == 0) // dang muon sach
 		{
 			n = tinhSoNgay(q->data.ngaymuon);
-			cout << n;
 			if (n >= 7)
 				return true;
 		}
@@ -1184,6 +1183,7 @@ int gioiTinh(int x, int y, string gioiTinhHienTai)
 				return 2;
 			}
 			else if (c == 27) {
+				NormalLine();
 				return -1;
 			}
 			else if (c == UP)
@@ -1521,11 +1521,11 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG, TREE_D
 			int thaoTacChucNang = menuDocGia(list, index, viTriDG, 3); 
 			
 			
-			if (thaoTacChucNang == F4) // xóa dg
+			if (thaoTacChucNang == DEL) // xóa dg
 			{
 				xoaDocGia(dsDG, list[viTriDG]->docGia->data.mathe);
 			}
-			if (thaoTacChucNang == F5) // chỉnh sửa
+			if (thaoTacChucNang == F2) // chỉnh sửa
 			{
 				hieuChinhDocGia(dsDG, list[viTriDG]->docGia->data.mathe);
 			}
@@ -1564,6 +1564,7 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG, TREE_D
 void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG, int statusGiaoDien)
 {
 	system("cls");
+	NormalLine();
 	
 	if (statusGiaoDien == 1)
 	{
@@ -1574,7 +1575,7 @@ void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG, int statusG
 		gotoxy(10, 22);
 		cout << "DEL: XOA";
 		gotoxy(10, 23);
-		cout << "HOME: HIEU CHINH";
+		cout << "F2: HIEU CHINH";
 		gotoxy(10, 24);
 		cout << "ESC: THOAT";
 		gotoxy(10, 25);
@@ -1597,7 +1598,7 @@ void inMotTrangDG(DS_TAMTHOI* list[], int StartIndex, int soLuongDG, int statusG
 		gotoxy(10, 21);
 		cout << "DEL: XOA";
 		gotoxy(10, 22);
-		cout << "HOME: HIEU CHINH";
+		cout << "F2: HIEU CHINH";
 		gotoxy(10, 23);
 		cout << "ESC: THOAT";
 		gotoxy(10, 24);
@@ -1725,11 +1726,7 @@ int menuDocGia(DS_TAMTHOI* list[], int soLuongDG, int &viTriDG, int statusGiaoDi
 						return DEL;
 
 					}
-					if (signal == HOME) // HIỆU CHỈNH
-					{
-						viTriDG = chon + (trangDSHienTai - 1) * NumberPerPage;
-						return HOME;
-					}
+					
 				}
 				if (statusGiaoDien == 1)
 				{
@@ -1750,7 +1747,15 @@ int menuDocGia(DS_TAMTHOI* list[], int soLuongDG, int &viTriDG, int statusGiaoDi
 					}
 				}
 				
-				 
+				if (statusGiaoDien == 1 || statusGiaoDien == 3)
+				{
+
+					if (signal == F2) // HIỆU CHỈNH
+					{
+						viTriDG = chon + (trangDSHienTai - 1) * NumberPerPage;
+						return F2;
+					}
+				}
 				
 			}
 		}
@@ -1821,7 +1826,7 @@ reset:
 			xoaDocGia(dsDG , arr[viTriDG]->docGia->data.mathe);
 			goto reset;
 		}
-		if (thaoTacChucNang == HOME) // chỉnh sửa
+		if (thaoTacChucNang == F2) // chỉnh sửa
 		{
 			
 			hieuChinhDocGia(dsDG, arr[viTriDG]->docGia->data.mathe);
@@ -1875,6 +1880,8 @@ int hieuChinhDocGia(TREE_DG &dsDG, int ma)
 	xoaHuongDan();
 	gotoxy(20, 20);
 	cout << "DANG O CHE DO HIEU CHINH DOC GIA -- NHAN ESC DE THOAT";
+	gotoxy(20, 21);
+	cout << "<- -> : THAY DOI TRANG THAI";
 	int i = nhapDSDG(dsDG, 2, ma);
 	return i;
 }
@@ -2017,6 +2024,7 @@ int nhapDSDG(TREE_DG& dsDG, int flag, int ma)
 					docgia.trangthaithe = 0;
 				}
 				if (checkTrangThai == -1) {
+					NormalLine();
 					return -1;
 				}
 				if (checkTrangThai == KEY_UP)
@@ -2167,7 +2175,7 @@ void xoaHuongDan()
 	gotoxy(10, 23);
 	cout << "                ";
 	gotoxy(10, 24);
-	cout << "             ";
+	cout << "                                                          ";
 	gotoxy(10, 25);
 	cout << "                                                 ";
 }
