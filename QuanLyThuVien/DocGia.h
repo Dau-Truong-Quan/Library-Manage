@@ -1502,7 +1502,7 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG, TREE_D
 		{
 			//tìm vị trí của chuỗi con tuKhoa trong tên độc giả
 			vitri_timthay = arr[i]->ten.find(tuKhoa); 
-			if (vitri_timthay != string::npos) //npos - tương tự như null
+			if (vitri_timthay != -1) //Nếu không được tìm thấy, nhận giá trị -1
 			{
 				/*xuatThongTinDocGia(arr[i]->docGia->data, thuTu++);*/
 				list[index] = arr[i];
@@ -2502,7 +2502,7 @@ timKiem:
 	{
 		//tìm vị trí của chuỗi con tuKhoa trong tên đầu sách
 		vitri_timthay = l.ds[i]->tensach.find(tuKhoa);
-		if (vitri_timthay != -1) //npos - tương tự như null
+		if (vitri_timthay != -1) //Nếu không được tìm thấy, nhận giá trị -1
 		{
 			a[dem] = i; //lưu lại vị trí đầu sách này
 			dem++;
