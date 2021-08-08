@@ -373,15 +373,19 @@ void huongDan1()
 	gotoxy(X_Tutorial, Y_Tutorial + 2);
 	cout << " Page Up: Len";
 	gotoxy(X_Tutorial, Y_Tutorial + 3);
-	cout << " Page Down: Xuong";
+	cout << " Page Down: Xuong           ";
 	gotoxy(X_Tutorial, Y_Tutorial + 4);
-	cout << " Insert: Them sach";
+	cout << " Insert: Them sach          ";
 	gotoxy(X_Tutorial, Y_Tutorial + 5);
-	cout << " Delete: Xoa sach";
+	cout << " Delete: Xoa sach           ";
 	gotoxy(X_Tutorial, Y_Tutorial + 6);
-	cout << " F2: Sua sach";
+	cout << " F2: Sua sach             ";
 	gotoxy(X_Tutorial, Y_Tutorial + 7);
-	cout << " ESC: Tro ve";
+	cout << " ESC: Tro ve               ";
+	gotoxy(X_Tutorial, Y_Tutorial + 8);
+	cout << "                                  ";
+	gotoxy(X_Tutorial, Y_Tutorial + 9);
+	cout << "                                  ";
 
 	//SetColor(12);
 	gotoxy(X_Notification, Y_Notification);
