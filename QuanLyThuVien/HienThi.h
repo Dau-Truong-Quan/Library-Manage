@@ -198,7 +198,7 @@ void CenterMenu()
 	LIST_DS l;
 	TREE_DG dsDG;
 	khoiTaoDS(l);
-	khoiTaoDS(dsDG);
+	khoiTaoDG(dsDG);
 	docFileDS(l);
 	docFileDG(dsDG);
 	introduce();
