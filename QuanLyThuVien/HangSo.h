@@ -69,7 +69,7 @@ const int slItemDG = 3;
 #define X_Tutorial 5
 #define Y_Tutorial 27
 // Toa do dat tieu de VD: Quan Li Thu Vien
-#define X_TitlePage 60
+#define X_TitlePage 77
 #define Y_TitlePage 1
 // Toa do phan thong bao
 #define X_Notification 115

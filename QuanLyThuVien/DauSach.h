@@ -173,6 +173,11 @@ int nhapDS(LIST_DS& l, int cs, int flag)
 					inThongBao("Ma ISBN bi trung!");
 					break;
 				}
+				if (s.ISBN.length() < 10 || s.ISBN.length() > 10)
+				{
+					inThongBao("Ma ISBN phai gom 10 ky tu so!");
+					break;
+				}
 			}
 			if (flag == 1) //trường hợp xóa đầu sách
 			{
@@ -372,7 +377,6 @@ int nhapDMS(LIST_DS& l, string isbn, PTR_DMS& First)
 	int viTri = 1;// so thu tu bat dau nhap	
 	int kt;
 	int khoangCach = 25;
-	int pos;
 	string str;
 	danhmucsach x;
 	int stt = 1; //stt mã sách
@@ -407,8 +411,7 @@ int nhapDMS(LIST_DS& l, string isbn, PTR_DMS& First)
 					q = q->next;
 				}
 				x.vitri = q->data.vitri; // lấy vị trí cuối cùng của sách đã tồn tại
-				pos = q->data.masach.find("-"); // lấy vị trí của kí tự - trong chuỗi
-				str = q->data.masach.substr(pos + 1); //  lấy chuỗi con của q->data.masach bắt đầu sau kí tự '-'
+				str = q->data.masach.substr(11); //  lấy chuỗi con của q->data.masach bắt đầu sau kí tự '-'
 				stt += atoi(str.c_str()); //chuyển chuỗi sang số
 			}
 			for (int j = 0; j < n; j++)
@@ -421,7 +424,7 @@ int nhapDMS(LIST_DS& l, string isbn, PTR_DMS& First)
 				{
 					xoaBangNhap();
 					xoaThongBao();
-					return j+1;
+					return j;
 				}
 				x.trangthai = 0; // mặc định sách có thể mượn được
 				themLastDMS(First, taoNodeDMS(x));

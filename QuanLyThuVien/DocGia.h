@@ -580,14 +580,15 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 		int indexDS = 0;
 		gotoxy(99, 42); cout << "                         ";
 		while (1) // vòng while dừng khi số lượng sách hơn 3 hoặc nhấn phím ESC
-		{
+		{			
 			bool check = false; // kiem tra co tim thay ma sach hay ko
 			if (dem >= 3) break; // mượn đến khi nào sách bằng 3 cuốn thì dừng 
 			system("cls");
 			gotoxy(20, 5);
 			cout << "CHE DO MUON SACH";
 			xuatSachMuon(nodeDG, l);
-			ten_sach = ""; // mỗi lần nhập là reset mã sách
+			ten_sach = ""; // mỗi lần nhập là reset tên và mã sách
+			masach = "";
 			gotoxy(35, 30);
 			cout << "NHAP TEN SACH: ";
 			bienThaoTac = nhap_ki_tu(ten_sach, 1 , 0, 0);			
@@ -601,15 +602,17 @@ void MUON_SACH(TREE_DG& t, LIST_DS& l, TREE_DG& nodeDG)
 			{
 				xoaThongBao();
 				inThongBao("Khong tim thay dau sach thich hop!");
-				xoaBangNhap();
+				Sleep(1000);
+				xoaThongBao();
 				continue;
 			}
-			if (masach.compare("") != 0)
+			if (masach.compare("") == 0)
 			{
-				if (xac_nhan(80, 40, "XAC NHAN MUON SACH NAY", "") == false)
-				{
-					continue;
-				}
+				continue;
+			}
+			if (xac_nhan(80, 40, "XAC NHAN MUON SACH NAY", "") == false)
+			{
+				continue;
 			}
 			
 			bool checkExistDMS = false;
@@ -1496,7 +1499,7 @@ int timKiemDocGiaTheoTen(DS_TAMTHOI* arr[], string tuKhoa, int soLuongDG, TREE_D
 		{
 			//tìm vị trí của chuỗi con tuKhoa trong tên độc giả
 			vitri_timthay = arr[i]->ten.find(tuKhoa); 
-			if (vitri_timthay != string::npos) //npos - tương tự như null
+			if (vitri_timthay != -1) //Nếu không được tìm thấy, nhận giá trị -1
 			{
 				/*xuatThongTinDocGia(arr[i]->docGia->data, thuTu++);*/
 				list[index] = arr[i];
@@ -2561,7 +2564,7 @@ timKiem:
 	{
 		//tìm vị trí của chuỗi con tuKhoa trong tên đầu sách
 		vitri_timthay = l.ds[i]->tensach.find(tuKhoa);
-		if (vitri_timthay != string::npos) //npos - tương tự như null
+		if (vitri_timthay != -1) //Nếu không được tìm thấy, nhận giá trị -1
 		{
 			a[dem] = i; //lưu lại vị trí đầu sách này
 			dem++;
@@ -2699,13 +2702,14 @@ timKiem:
 				}
 			}
 			break;
-		case ENTER:// chọn đầu sách để xem sách
-			slsach = demSoLuongSach(*l.ds[cs]);
-			xoa(39, 0, 128, 29);
-			gotoxy(X_TitlePage, Y_TitlePage);
-			cout << "SACH THUOC DAU SACH: " << l.ds[cs]->tensach << "\n\n";
+		case ENTER:// chọn đầu sách để xem sách			
+			slsach = demSoLuongSach(*l.ds[cs]);			
+			
 			if (flag == 0)
 			{
+				system("cls");
+				gotoxy(X_TitlePage, Y_TitlePage);
+				cout << l.ds[cs]->ISBN << " - " << l.ds[cs]->tensach << "\n\n";
 				menuXemDanhMucSach(l, l.ds[cs]->ISBN, l.ds[cs]->dms, slsach, dsDG);
 				system("cls");
 				//xoa(39, 0, 128, 40);
@@ -2715,7 +2719,10 @@ timKiem:
 				break;
 			}
 			else
-			{
+			{				
+				xoa(39, 0, 128, 29);
+				gotoxy(X_TitlePage, Y_TitlePage);
+				cout << l.ds[cs]->ISBN << " - " << l.ds[cs]->tensach << "\n\n";
 				masach = menuChonDanhMucSach(l.ds[cs]->dms, slsach);
 				xoa(39, 0, 128, 29);
 				return dem;
@@ -2764,7 +2771,7 @@ void menuDauSach(LIST_DS& l, TREE_DG dsDG)
 			system("cls");
 			//xoa(39, 0, 128, 40);
 			gotoxy(X_TitlePage, Y_TitlePage);
-			cout << "SACH THUOC DAU SACH : " << l.ds[cs]->tensach << "\n\n";
+			cout << l.ds[cs]->ISBN << " - " << l.ds[cs]->tensach << "\n\n";
 			menuXemDanhMucSach(l, l.ds[cs]->ISBN, l.ds[cs]->dms, slsach, dsDG);
 			system("cls");
 			//xoa(39, 0, 128, 40);
