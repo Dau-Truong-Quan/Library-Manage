@@ -79,6 +79,7 @@ string tachMaSach(string masach);
 PTR_DMS timKiemDanhMucSach(LIST_DS l, string masach);
 void huongDan();
 void top10SachMuon(LIST_DS l);
+void giaiphong_dausach(LIST_DS& l);
 
 //=====CÁC THUẬT TOÁN=====
 
@@ -811,5 +812,21 @@ void top10SachMuon(LIST_DS l)
 	{
 		c = _getch();
 		if (c == ESC) return;
+	}
+}
+
+void giaiphong_dausach(LIST_DS& l)
+{
+	PTR_DMS p;
+	for (int i = 0; i < l.n; i++)
+	{
+		p = NULL;
+		while (l.ds[i]->dms != NULL)
+		{
+			p = l.ds[i]->dms;
+			l.ds[i]->dms = l.ds[i]->dms->next;
+			delete p;
+		}
+		delete l.ds[i];
 	}
 }

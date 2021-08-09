@@ -85,6 +85,7 @@ void themLastDMS(PTR_DMS& First, node_DMS* p)
 		q->next = p;
 	}
 }
+
 void inDMS(PTR_DMS First)
 {
 	int stt = 0;
