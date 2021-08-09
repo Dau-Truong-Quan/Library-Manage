@@ -262,6 +262,8 @@ void CenterMenu()
 				top10SachMuon(l);
 				break;
 			case MaxItem:
+				giaiphong_cay(dsDG);
+				giaiphong_dausach(l);
 				system("color 0B");
 				Exit = true;
 				system("cls");

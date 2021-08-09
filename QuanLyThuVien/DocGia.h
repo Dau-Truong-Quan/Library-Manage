@@ -136,6 +136,8 @@ void xoaXacNhan();
 void sapXepTheoNgayQuaHan(DS_TAMTHOI* arr[], int slDG);
 void duyetCayQuaHan(TREE_DG ds_docGia, DS_TAMTHOI* nodes[], int& n);
 void xoaThongTin1DG();
+void giaiphong_cay(TREE_DG& dsDG);
+
 //DOC VA GHI FILE
 void docFileDG(TREE_DG& dsDG);
 void ghiFileDanhSachDocGia(TREE_DG t);
@@ -2984,4 +2986,22 @@ void menuDauSach(LIST_DS& l, TREE_DG dsDG)
 			}
 		}
 	}// while(true)
+}
+
+void giaiphong_cay(TREE_DG& dsDG)
+{
+	if (dsDG != NULL)
+	{
+		PTR_MT p = NULL;
+		while (dsDG->data.mt.pHead != NULL)
+		{
+			p = dsDG->data.mt.pHead;
+			dsDG->data.mt.pHead = dsDG->data.mt.pHead->next;
+			delete p;
+		}
+		giaiphong_cay(dsDG->left);
+		giaiphong_cay(dsDG->right);
+		delete dsDG;
+		dsDG = NULL;
+	}
 }
