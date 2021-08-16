@@ -468,6 +468,13 @@ void swap(indexSoLuotMuon& x, indexSoLuotMuon& y)
 	y = temp;
 }
 
+void swap1(indexTheLoai& x, indexTheLoai& y)
+{
+	indexTheLoai temp = x;
+	x = y;
+	y = temp;
+}
+
 void sapxep(indexSoLuotMuon a[], int l, int r)
 {
 	int x;
@@ -490,11 +497,41 @@ void sapxep(indexSoLuotMuon a[], int l, int r)
 	if (i < r) sapxep(a, i, r);
 }
 
+void sapxep1(indexTheLoai a[], int l, int r)
+{
+	string x, y;
+	int i, j;
+	i = l;
+	j = r;
+	x = a[(l + r) / 2].theloai;
+	y = a[(l + r) / 2].tensach;
+	do
+	{
+		while ((a[i].theloai.compare(x) < 0) || (a[i].theloai.compare(x) == 0 && a[i].tensach.compare(y) < 0))i++;
+		while ((a[j].theloai.compare(x) > 0) || (a[j].theloai.compare(x) == 0 && a[j].tensach.compare(y) > 0))j--;
+		if (i <= j)
+		{
+			swap1(a[i], a[j]);
+			i++;
+			j--;
+		}
+	} while (i <= j);
+	if (l < j) sapxep1(a, l, j);
+	if (i < r) sapxep1(a, i, r);
+}
+
 //sắp xếp số lượt mượn giảm dần
 void quickSort(indexSoLuotMuon a[], int n)
 {
 	sapxep(a, 0, n - 1);
 }
+
+//sắp xếp thể loại tăng dần, thể loại giống nhau thì xếp theo tên sách
+void quickSort1(indexTheLoai a[], int n)
+{
+	sapxep1(a, 0, n - 1);
+}
+
 void Insertion_sort(listTheLoai& list, int n)
 {
 	indexTheLoai x;
@@ -519,6 +556,7 @@ void sapXepGiuNguyenIndex(LIST_DS& l, listTheLoai& listIndex)
 		listIndex.nodes[i].theloai = l.ds[i]->theloai;
 		listIndex.nodes[i].tensach = l.ds[i]->tensach;
 	}
+	/*
 	for (int i = 0; i < l.n - 1; i++)
 		for (int j = i + 1; j < l.n; j++)
 			if (listIndex.nodes[j].theloai.compare(listIndex.nodes[i].theloai) < 0)
@@ -526,6 +564,8 @@ void sapXepGiuNguyenIndex(LIST_DS& l, listTheLoai& listIndex)
 			else if (listIndex.nodes[j].theloai.compare(listIndex.nodes[i].theloai) == 0)
 				if (listIndex.nodes[j].tensach.compare(listIndex.nodes[i].tensach) < 0)
 					swap(listIndex.nodes[j], listIndex.nodes[i]);
+	*/
+	quickSort1(listIndex.nodes, l.n);
 }
 
 //in đầu sách

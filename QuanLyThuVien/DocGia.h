@@ -1435,9 +1435,33 @@ void swapDocGia(DS_TAMTHOI* &tamThoi1, DS_TAMTHOI* &tamThoi2)
 
 }
 
+void sapxep2(DS_TAMTHOI* arr[], int l, int r)
+{
+	string x, y;
+	int i, j;
+	i = l;
+	j = r;
+	x = arr[(l + r) / 2]->ten;
+	y = arr[(l + r) / 2]->ho;
+	do
+	{
+		while ((arr[i]->ten.compare(x) < 0) || (arr[i]->ten.compare(x) == 0 && arr[i]->ho.compare(y) < 0))i++;
+		while ((arr[j]->ten.compare(x) > 0) || (arr[j]->ten.compare(x) == 0 && arr[j]->ho.compare(y) > 0))j--;
+		if (i <= j)
+		{
+			swapDocGia(arr[i], arr[j]);
+			i++;
+			j--;
+		}
+	} while (i <= j);
+	if (l < j) sapxep2(arr, l, j);
+	if (i < r) sapxep2(arr, i, r);
+}
+
 // sắp xếp độc giả theo tên + họ tăng dần
 void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
 {
+	/*
 	for (int i = 0; i < slDG - 1; i++)
 	{
 		for (int j = i + 1; j < slDG; j++)
@@ -1456,6 +1480,8 @@ void sapXepTheoTen(DS_TAMTHOI* arr[], int slDG)
 			}
 		}
 	}
+	*/
+	sapxep2(arr, 0, slDG - 1);
 }
 // sắp xếp độc giả theo ngày quá hạn
 void sapXepTheoNgayQuaHan(DS_TAMTHOI* arr[], int slDG)
