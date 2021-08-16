@@ -173,7 +173,7 @@ int menu_dong(string ThucDon[], int n, int x, int y)
 			}
 			break;
 		case KEY_DOWN:
-			if (pointer + 1 < MaxItem)
+			if (pointer + 1 < n)
 			{
 				NormalLine();
 				gotoxy(x, y + pointer * 2);
@@ -235,11 +235,8 @@ void CenterMenu()
 					}
 					break;
 					default:
-					{					
-						
 						vongLap = false;
-						break;
-					}						
+						break;						
 					}
 				}
 				break;
